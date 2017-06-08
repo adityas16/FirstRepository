@@ -4,52 +4,100 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.aditya.research.pso.etl.StringUtils;
+import com.aditya.research.pso.parsers.GameParser;
 
 import pso.DataValiditor;
+import pso.FileUtils;
 import pso.Shot;
 
 public class TemplateFileReader {
-	private DataValiditor dv = DataValiditor.football();
-	
-	public static void main(String[] args) throws IOException {
-//		List<String> lines = Files.readAllLines(Paths.get("/home/aditya/Research Data/DataEntry/PSO-data-input-template.csv"));
-		TemplateFileReader tfr = new TemplateFileReader();
-		tfr.checkShootouts();
+	private String competition;
+
+	public TemplateFileReader(String competition) {
+		this.competition = competition;
 	}
 
-	private  void checkShootouts() throws IOException {
-		List<String> lines = Files.readAllLines(Paths.get("/home/aditya/CDL_DataEntry.csv"));
+	//11,5,2002 Mallorca, starting team = 2
+	//30,10,1991 Leida, starting team = 1
+	//31,3,1982 Real Madrid, starting team = 2
+	//27,3,1974 Real Oviedo, all 1, then all 2
+	//11,1,1978 Getafe, all 2, then all 1
+	//6	1	1988  Castilla repeated
+	//Repeated matches. Matches repeates as home-away, away-home
+	//5	7	1975,Real Madrid starting team is incorrect 
+
+	private DataValiditor dv = DataValiditor.football();
+
+	public static void main(String[] args) throws IOException {
+		//		List<String> lines = Files.readAllLines(Paths.get("/home/aditya/Research Data/DataEntry/PSO-data-input-template.csv"));
+		TemplateFileReader tfr = new TemplateFileReader("Copa del Rey");
+		tfr.checkShootouts("/home/aditya/Research Data/DataEntry/" + "CDL_DataEntry_72");
+//		tfr.checkShootouts("/home/aditya/Research Data/DataEntry/" + "test");
+	}
+
+	private  void checkShootouts(String fileName) throws IOException {
+		List<String> lines = Files.readAllLines(Paths.get(fileName + ".csv"));
+		List<Shot> allShootouts = new ArrayList<>();
+		List<Map<String,String>> allGames = new ArrayList<>();
+		Set<String> uniqueGames = new HashSet<>();
+		
 		Matcher m1 = null;
 		Iterator<String> iter = lines.iterator();
 		int validShootouts = 0,invalidShootouts =0;
 		while(iter.hasNext()){
 			Map<String, String> gameMap = new LinkedHashMap<String, String>();
+			gameMap.put("uri", "NA");
+			GameParser.initAllFields(gameMap);
+			gameMap.put("competition", competition);
 			extractDate(iter, gameMap);
+			List<Shot> shootout = new ArrayList<>();
 			try{
-			extractTeams(iter, gameMap);
-			List<Shot> shootout = extractShootout(iter);
-			validShootouts++;
+				extractTeams(iter, gameMap);
+				shootout = extractShootout(iter);
+				setShootoutGameName(getGameName(gameMap), shootout);
+
+				validShootouts++;
 			}catch(Exception e){
 				System.out.println("Invalid game : " + getGameName(gameMap));
-				System.out.println(e.getMessage());
 				invalidShootouts++;
 			}
-			
+			if(!uniqueGames.contains(getGameName(gameMap))){
+				uniqueGames.add(getGameName(gameMap));
+				allShootouts.addAll(shootout);
+				gameMap.put("uri", getGameName(gameMap));
+				allGames.add(gameMap);
+			}
+			else{
+				System.out.println("Duplicate game :" + getGameName(gameMap));
+			}
+
 		}
-		System.out.println("valid shootouts" + validShootouts);
+		System.out.println("valid shootouts" + uniqueGames.size());
 		System.out.println("invalid shootouts" + invalidShootouts);
+		FileUtils.writeToCSV(fileName + "_validated.csv", allShootouts);
+		FileUtils.write(allGames,fileName + "_games.csv");
+	}
+
+	private void setShootoutGameName(String gameName,List<Shot> shootout){
+		for (Shot shot : shootout) {
+			shot.gameName = gameName;
+			shot.gameId = gameName;
+			shot.competition = competition;
+		}
 	}
 
 	private String getGameName(Map<String, String> gameMap) {
-		return gameMap.get("day") +"/"  + gameMap.get("month")+"/" + gameMap.get("year")+":" + gameMap.get("home") + gameMap.get("away");
+		return gameMap.get("day") +"/"  + gameMap.get("month")+"/" + gameMap.get("year")+":" + gameMap.get("homeTeam") + "-" + gameMap.get("awayTeam");
 	}
 
 	private  void extractDate(Iterator<String> iter, Map<String, String> gameMap) {
@@ -64,17 +112,17 @@ public class TemplateFileReader {
 			}
 			else if(line.replace(",", "").length() > 0){
 				//Searching for next date instead of throwing error
-//				throw new RuntimeException("Couldn't find date");
+				//				throw new RuntimeException("Couldn't find date");
 			}
 		}
 	}
-	
+
 	private  void extractTeams(Iterator<String> iter, Map<String, String> gameMap) {
 		while(iter.hasNext()){
 			String line = iter.next();
-			Matcher m = Pattern.compile("Team 1,(.*),(.*)").matcher(StringUtils.toSimpleCharset(line));
+			Matcher m = Pattern.compile("Team 1,([^,]*)").matcher(StringUtils.toSimpleCharset(line));
 			if(m.find()){
-				gameMap.put("home", m.group(1));
+				gameMap.put("homeTeam", m.group(1));
 				break;
 			}
 			else if(line.replace(",", "").length() > 0){
@@ -82,12 +130,12 @@ public class TemplateFileReader {
 				throw new RuntimeException("Couldn't find home team");
 			}
 		}
-		
+
 		while(iter.hasNext()){
 			String line = iter.next();
-			Matcher m = Pattern.compile("Team 2,(.*),(.*)").matcher(StringUtils.toSimpleCharset(line));
+			Matcher m = Pattern.compile("Team 2\\s*,([^,]*)").matcher(StringUtils.toSimpleCharset(line));
 			if(m.find()){
-				gameMap.put("away", m.group(1));
+				gameMap.put("awayTeam", m.group(1));
 				break;
 			}
 			else if(line.replace(",", "").length() > 0){
@@ -118,7 +166,7 @@ public class TemplateFileReader {
 				throw new RuntimeException("Invalid Starting team");
 			}
 			iter.next();
-			
+
 			int homeScore=0,awayScore = 0,kickNumber=1;
 			while(iter.hasNext()){
 				line = iter.next();
@@ -139,18 +187,15 @@ public class TemplateFileReader {
 				}
 				shot.homeScore = homeScore;
 				shot.awayScore = awayScore;
-				
+
 				shootout.add(shot);
-//				System.out.println(shot);
+				//				System.out.println(shot);
 				kickNumber ++;
 			}
 			break;
 		}
-		try{
-		dv.checkGame("1", shootout);
-		}
-		catch(Exception e){
-			throw new RuntimeException("Invalid kick sequence");
+		if(!dv.checkGame("1", shootout)){
+			throw new RuntimeException("Invalid Shootout");
 		}
 		return shootout;
 	}

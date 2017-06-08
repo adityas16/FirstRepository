@@ -20,6 +20,10 @@ import com.aditya.research.pso.parsers.Parser;
 import com.aditya.research.pso.parsers.PenaltyShootoutParser;
 import com.aditya.research.pso.parsers.PlayerParser;
 import com.aditya.research.pso.parsers.PlayerPenaltyStatsParser;
+import com.aditya.research.pso.parsers.austriasoccer.ASATGameParser;
+import com.aditya.research.pso.parsers.austriasoccer.ASATPenaltyShootoutParser;
+import com.aditya.research.pso.parsers.championat.ChampionatGameParser;
+import com.aditya.research.pso.parsers.championat.ChampionatPenaltyShootoutParser;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import pso.Constants;
@@ -49,6 +53,33 @@ public class ParserRuner {
 		else if(extractFor.equals("games")){
 			pr.pageCache = DBCache.hockeyrefGameCache();
 			pr.parser = new com.aditya.research.pso.crawlers.hockeyref.GameParser();
+		} 
+		return pr;
+	}
+	
+	public static ParserRuner ASATParserRuner(String extractFor) {
+		ParserRuner pr = new ParserRuner();
+		pr.outputFile = Constants.ASATFolder + extractFor + ".csv";
+		if(extractFor.equals("pso")){
+			pr.pageCache = DBCache.ASATpsoCache();
+			pr.parser = new ASATPenaltyShootoutParser();
+		}
+		else if(extractFor.equals("games")){
+			pr.pageCache = DBCache.ASATpsoCache();
+			pr.parser = new ASATGameParser();
+		} 
+		return pr;
+	}
+	public static ParserRuner ChampionatParserRuner(String extractFor) {
+		ParserRuner pr = new ParserRuner();
+		pr.outputFile = Constants.championatFolder + extractFor + ".csv";
+		if(extractFor.equals("pso")){
+			pr.pageCache = DBCache.ChampionatpsoCache();
+			pr.parser = new ChampionatPenaltyShootoutParser();
+		}
+		else if(extractFor.equals("games")){
+			pr.pageCache = DBCache.ChampionatpsoCache();
+			pr.parser = new ChampionatGameParser();
 		} 
 		return pr;
 	}
@@ -106,7 +137,7 @@ public class ParserRuner {
 		
 		boolean headersWritten = false;
 		while(iter.hasNext()){
-			System.out.println(count++);
+//			System.out.println(count++);
 			List<Map<String, String>> records = new ArrayList<Map<String,String>>();
 			DocumentWIthIdentifier documentWIthIdentifier = iter.next();
 			try{
@@ -162,12 +193,15 @@ public class ParserRuner {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String extractFor = "player";
+		String extractFor = "pso";
 		
-		ParserRuner pr = new ParserRuner(extractFor);
+//		ParserRuner pr = new ParserRuner(extractFor);
 //		ParserRuner pr = ParserRuner.hockeyRefParserRuner(extractFor);
 //		pr.parseAll();
 //		pr.parseFromFile(Constants.weltFolder + "extractedCSV/games_with_incidents.csv");
-		pr.parseFromFile("/home/aditya/epl_players_sorted");
+//		pr.parseFromFile("/home/aditya/epl_players_sorted");
+		
+		ParserRuner pr = ParserRuner.ChampionatParserRuner(extractFor);
+		pr.parseAll();
 	}
 }

@@ -19,8 +19,8 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class DataValiditor {
 	private AllPaths allPaths;
 	private int numberOfRegularKicks;
-	
-	
+
+
 	public static DataValiditor football(){
 		DataValiditor dv = new DataValiditor();
 		dv.numberOfRegularKicks = 10;
@@ -29,7 +29,7 @@ public class DataValiditor {
 		dv.allPaths = State.computeAllPaths(com.aditya.research.pso.common.Constants.defaultKickSequence());
 		return dv;
 	}
-	
+
 	public static DataValiditor iceHockey(){
 		DataValiditor dv = new DataValiditor();
 		dv.numberOfRegularKicks = 6;		
@@ -38,17 +38,17 @@ public class DataValiditor {
 		dv.allPaths = State.computeAllPaths(com.aditya.research.pso.common.Constants.iceHockeyKickSequence());
 		return dv;
 	}
-	
+
 	private DataValiditor() {
 	}
-	
+
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-//		String baseFolder = Constants.hockeyrefFolder;
-//		DataValiditor dv = iceHockey();
-		
-		String baseFolder = Constants.weltFolder;
+		//		String baseFolder = Constants.hockeyrefFolder;
+		//		DataValiditor dv = iceHockey();
+
+		String baseFolder = Constants.championatFolder;
 		DataValiditor dv = football();
-		
+
 		Map<String, List<Shot>> validGames = dv.getValidGames(baseFolder + "extractedCSV/pso_raw.csv");
 		writeToFile(validGames, baseFolder + "processedCSV/pso_validated.csv");
 	}
@@ -57,7 +57,7 @@ public class DataValiditor {
 		Map<String, List<Shot>> shotsByGame;
 		Map<String, List<Shot>> validGames = new HashMap<String, List<Shot>>();
 		shotsByGame = FileUtils.readShootoutsByMatch(fileName);
-		
+
 		Set<String> invalidGames = new HashSet<String>();
 
 		for (Entry<String,List<Shot>> game : shotsByGame.entrySet()) {
@@ -71,12 +71,12 @@ public class DataValiditor {
 		System.out.println("Invalid Games : " + invalidGames.size());
 		return validGames;
 	}
-	
+
 	private static void writeToFile(Map<String, List<Shot>> validGames,String filename) throws IOException{
 		CSVWriter writer = new CSVWriter(new FileWriter(filename));
 		String[] headers = new String[1];
-		
-		
+
+
 		boolean headersWritten = false;
 		for (Entry<String,List<Shot>> game : validGames.entrySet()) {
 			List<Map<String, String>> records = new ArrayList<Map<String,String>>();
@@ -100,7 +100,7 @@ public class DataValiditor {
 		}
 		writer.close();
 	}
-	
+
 	static int count = 0;
 	public boolean checkGame(String gameId, List<Shot> shots) {
 		int a1=0,b1=0;
@@ -116,12 +116,16 @@ public class DataValiditor {
 		}
 		if(!allPaths.exists(gamePath)){
 			count ++;
-//			System.out.print("Game path incorrect : ");
-//			for (int i=1;i<gamePath.size();i++) {
-//				System.out.print(gamePath.get(i).a+ "" + gamePath.get(i).b);
-//			}
-//			System.out.print("  :" + gameId);
-//			System.out.println("");
+			//			System.out.print("Game path incorrect : ");
+			//			for (int i=1;i<gamePath.size();i++) {
+			//				System.out.print(gamePath.get(i).a+ "" + gamePath.get(i).b);
+			//			}
+			//			System.out.print("  :" + gameId);
+			//			System.out.println("");
+			flag = false;
+		}
+		if((shots.size() == numberOfRegularKicks) && (shots.get(numberOfRegularKicks - 1).getAScore()==shots.get(numberOfRegularKicks - 1).getBScore())){
+			System.out.println("No Rapid fire even though scores were level after regular shots : " + gameId);
 			flag = false;
 		}
 		for (Shot shot : shots) {
@@ -159,7 +163,7 @@ public class DataValiditor {
 		}
 		else{
 			if(!ScoreValidator.isEndState(lastShot.getAScore(), lastShot.getBScore(), lastShot.kickNumber)){
-//				System.out.println("Does not end in valid end state  : " + gameId);
+				System.out.println("Does not end in valid end state  : " + gameId);
 				flag = false;
 			}
 		}
