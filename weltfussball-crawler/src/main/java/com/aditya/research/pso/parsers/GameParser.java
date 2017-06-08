@@ -32,7 +32,7 @@ public class GameParser implements Parser {
 		extractHomeKeeper(doc, asMap,5);
 		extractAwayKeeper(doc, asMap,5);
 
-		asMap.put("season_uri", doc.select("#site > div.white > div.content > div > div.box2.borderless > div > table > tbody > tr > td:nth-child(1) > form > select > option:nth-child(1)").get(0).attr("value").split("/")[2]);
+//		asMap.put("season_uri", doc.select("#site > div.white > div.content > div > div.box2.borderless > div > table > tbody > tr > td:nth-child(1) > form > select > option:nth-child(1)").get(0).attr("value").split("/")[2]);
 
 		return Arrays.asList(asMap);
 	}
@@ -107,12 +107,11 @@ public class GameParser implements Parser {
 
 	public static void main(String[] args) throws IOException {
 		GameParser mp = new GameParser();
-		//Download from site
-		System.out.println(mp.parse(Jsoup.connect("http://www.worldfootball.net/report/" + "afrika-cup-1992-im-senegal-finale-elfenbeinkueste-ghana")
-				.userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0")
-	               .referrer("http://www.google.com") 
-	               .timeout(10000)               
-	               .get()));
+		//Download page from site
+		String gameUri = "afrika-cup-1992-im-senegal-finale-elfenbeinkueste-ghana";
+		Document doc = Jsoup.connect("http://www.worldfootball.net/report/" + gameUri).get();
+		//Parse the page
+		System.out.println(mp.parse(doc));
 		
 		//Read from cache
 		mp.parse(DBCache.weltgameCache().get("afrika-cup-1992-im-senegal-finale-elfenbeinkueste-ghana"));
