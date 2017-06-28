@@ -11,7 +11,7 @@ load_all()
 print_stats = function(df){
   b = binom.test(sum(df$is_team_A_winner),nrow(df),alternative = "g")
   b2 = binom.test(sum(df$is_team_A_winner),nrow(df))
-  t = t.test()
+  #t = t.test()
   print(sprintf("%g,%f",nrow(df),b$p.value))
   a = c(nrow(df),round(as.numeric(b$p.value),3),round(as.numeric(b2$p.value),3),round(sum(df$is_team_A_winner)/length(df$is_team_A_winner),3))
   return(a)

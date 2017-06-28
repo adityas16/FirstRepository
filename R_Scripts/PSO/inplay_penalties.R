@@ -9,6 +9,11 @@ in_play_penalties$is_score = 1 - in_play_penalties$is_miss
 in_play_penalties$is_home_corrected  = in_play_penalties$is_home
 in_play_penalties$is_home_corrected[in_play_penalties$is_miss==0]  = 1- in_play_penalties$is_home[in_play_penalties$is_miss==0]
 
+in_play_penalties$gd = in_play_penalties$current_home_score - in_play_penalties$current_away_score
+in_play_penalties$shooter_gd = ifelse(in_play_penalties$is_home,in_play_penalties$gd,-1*in_play_penalties$gd)
+in_play_penalties$shooter_gd_sign = sign(in_play_penalties$shooter_gd)
+
+
 seasons=ddply(in_play_penalties,c("competition","year"),n=length(uri),scored = sum(1-is_miss),missed = sum(is_miss),p=sum(1-is_miss)/length(uri),summarise)
 seasons = seasons[order(seasons$n * -1),]
 
@@ -70,3 +75,12 @@ ggplot(data=player_timeline[player_timeline$shot_number<10,]) +
   scale_color_gradient2(midpoint=0.75, low="red", mid="white",
                        high="green", space ="Lab" ,limits=c(0.5, 0.9))+
   scale_size_area(max_size = 15)
+
+#Effect of time on conversion rate
+seasons = seasons[seasons$p < 0.9,]
+penalties_with_miss_information = sqldf("select a.* from in_play_penalties a, seasons s where s.year = a.year and s.competition = a.competition")
+
+hist(penalties_with_miss_information$time)
+penalties_with_miss_information$bucket = floor(penalties_with_miss_information$time/15)
+ddply(penalties_with_miss_information,c("shooter_gd_sign"),prop=myprop(is_score),n=length(is_score),summarize)
+

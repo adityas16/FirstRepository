@@ -2,7 +2,6 @@ package com.aditya.research.pso.parsers;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,14 +10,11 @@ import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 
 import com.aditya.research.pso.etl.RoundNameParser;
 import com.aditya.research.pso.etl.StringUtils;
 
 import pso.DBCache;
-import pso.Shot;
 
 public class GameParser implements Parser {
 

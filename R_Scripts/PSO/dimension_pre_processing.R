@@ -98,7 +98,7 @@ read_final_scores = function(){
 }
 read_in_play_penalties = function(){
   inplay_goals = read.csv(paste(DATA_FOLDER,"extractedCSV/goals.csv",sep="/"))
-  return(inplay_goals[inplay_goals$isPenalty == "true",])
+    return(inplay_goals[inplay_goals$isPenalty == "true",])
 }
 read_odds <- function (){
   odds = read.csv(paste(DATA_FOLDER,"joined/bet_ex_odds.csv",sep="/"))

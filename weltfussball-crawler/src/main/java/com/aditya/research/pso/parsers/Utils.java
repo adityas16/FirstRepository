@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Utils {
@@ -27,6 +28,12 @@ public class Utils {
 	}
 	public static int asInt(boolean b){
 		return b?1:0;
+	}
+	
+	public static void printRecords(List<Map<String, String>> records){
+		for (Map<String, String> record : records) {
+			System.out.println(record);
+		}
 	}
 
 }

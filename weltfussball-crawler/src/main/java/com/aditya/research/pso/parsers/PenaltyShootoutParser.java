@@ -1,5 +1,6 @@
 package com.aditya.research.pso.parsers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,6 +15,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import pso.Constants;
+import pso.DBCache;
 import pso.FileSystemCache;
 import pso.Shot;
 
@@ -139,5 +141,11 @@ public class PenaltyShootoutParser implements Parser{
 		s.year = year;
 		s.stage = stage;
 		return s;
+	}
+	
+	public static void main(String[] args) throws IOException {
+		DBCache cache = DBCache.weltpsoCache();
+		PenaltyShootoutParser psp = new PenaltyShootoutParser();
+		Utils.printRecords(psp.parse( cache.get("afc-champions-league-qual-2013-finale-buriram-united-brisbane-roar")));
 	}
 }

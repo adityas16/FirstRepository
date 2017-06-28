@@ -41,19 +41,20 @@ public class TemplateFileReader {
 	public static void main(String[] args) throws IOException {
 		//		List<String> lines = Files.readAllLines(Paths.get("/home/aditya/Research Data/DataEntry/PSO-data-input-template.csv"));
 		TemplateFileReader tfr = new TemplateFileReader("Copa del Rey");
-		tfr.checkShootouts("/home/aditya/Research Data/DataEntry/" + "CDL_DataEntry_72");
-//		tfr.checkShootouts("/home/aditya/Research Data/DataEntry/" + "test");
+		tfr.checkShootouts("/home/aditya/Research Data/DataEntry/installment2/" + "installment2");
+		//		tfr.checkShootouts("/home/aditya/Research Data/DataEntry/" + "test");
 	}
 
 	private  void checkShootouts(String fileName) throws IOException {
 		List<String> lines = Files.readAllLines(Paths.get(fileName + ".csv"));
-		List<Shot> allShootouts = new ArrayList<>();
+		List<Shot> allShootouts = new ArrayList<>(),invalid;
 		List<Map<String,String>> allGames = new ArrayList<>();
 		Set<String> uniqueGames = new HashSet<>();
-		
+
 		Matcher m1 = null;
 		Iterator<String> iter = lines.iterator();
-		int validShootouts = 0,invalidShootouts =0;
+		int invalidShootouts =0;
+		int validShootouts =0;
 		while(iter.hasNext()){
 			Map<String, String> gameMap = new LinkedHashMap<String, String>();
 			gameMap.put("uri", "NA");
@@ -65,11 +66,11 @@ public class TemplateFileReader {
 				extractTeams(iter, gameMap);
 				shootout = extractShootout(iter);
 				setShootoutGameName(getGameName(gameMap), shootout);
-
-				validShootouts++;
+				validShootouts ++ ;
 			}catch(Exception e){
 				System.out.println("Invalid game : " + getGameName(gameMap));
 				invalidShootouts++;
+				continue;
 			}
 			if(!uniqueGames.contains(getGameName(gameMap))){
 				uniqueGames.add(getGameName(gameMap));
@@ -82,7 +83,8 @@ public class TemplateFileReader {
 			}
 
 		}
-		System.out.println("valid shootouts" + uniqueGames.size());
+		System.out.println("valid unique shootouts" + uniqueGames.size());
+		System.out.println("valid  shootouts" + validShootouts);
 		System.out.println("invalid shootouts" + invalidShootouts);
 		FileUtils.writeToCSV(fileName + "_validated.csv", allShootouts);
 		FileUtils.write(allGames,fileName + "_games.csv");
@@ -103,7 +105,7 @@ public class TemplateFileReader {
 	private  void extractDate(Iterator<String> iter, Map<String, String> gameMap) {
 		while(iter.hasNext()){
 			String line = iter.next();
-			Matcher m = Pattern.compile("date,(\\d+),(\\d+),(\\d+)").matcher(line);
+			Matcher m = Pattern.compile("date *,(\\d+),(\\d+),(\\d+)").matcher(line);
 			if(m.find()){
 				gameMap.put("year", m.group(3));
 				gameMap.put("month", m.group(2));
@@ -113,6 +115,10 @@ public class TemplateFileReader {
 			else if(line.replace(",", "").length() > 0){
 				//Searching for next date instead of throwing error
 				//				throw new RuntimeException("Couldn't find date");
+
+				if(line.contains("date")){
+					System.out.println("ERROR, no date found");
+				}
 			}
 		}
 	}
@@ -195,9 +201,36 @@ public class TemplateFileReader {
 			break;
 		}
 		if(!dv.checkGame("1", shootout)){
+			if(isOldSequence(shootout)){
+				System.out.println("Old sequence");
+			}
 			throw new RuntimeException("Invalid Shootout");
 		}
 		return shootout;
+	}
+
+	/*
+	 * Checks if the shootout is of the form AAAAABBBB AB AB ..
+	 */
+	private boolean isOldSequence(List<Shot> shootout){
+		if(shootout.size()<=5){
+			return false;
+		}
+
+		//First 5 shots by team going first
+		for(int i =1;i<=5;i++){
+			if(shootout.get(i-1).homeShotFirst){
+				if(shootout.get(i-1).awayScore!=0){
+					return false;
+				}
+			}
+			else{
+				if(shootout.get(i-1).homeScore!=0){
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 }

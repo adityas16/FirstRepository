@@ -32,6 +32,8 @@ df = post_2003
 g=glm(df$is_team_A_winner ~  1,family=binomial("logit"))
 lm_summary_table(g)
 
+#First mover competition-wise
+ddply(final_scores,c("competition"),n=length(competition),win_ratio = myprop(is_team_A_winner),summarise)
 
 #odds
 df = myjoin(final_scores,odds)

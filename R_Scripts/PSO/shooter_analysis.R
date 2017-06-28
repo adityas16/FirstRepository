@@ -192,3 +192,13 @@ x=ddply(df,c("round_adjusted"),
         n_inexp = length(isConverted[shooter_experienced==0]),
         summarise)
 x$p_value = mapply(z.prop1,x$prop_exp,x$prop_inexp,x$n_exp,x$n_inexp)
+
+#Are experienced shooters really better?
+x=ddply(pso,c("round_adjusted"),exp_shooters_prop = myprop(isConverted[shooter_experienced==1]),n_exp=length(isConverted[shooter_experienced==1])
+        ,inexp_shooters_prop = myprop(isConverted[shooter_experienced==0]),n_inexp=length(isConverted[shooter_experienced==0]),summarize)
+x$ratio = x$exp_shooters_prop / x$inexp_shooters_prop
+x
+#Shooting sequence by team
+x = ddply(pso,c("round_adjusted"),proportion_exp_shooters_A = myprop(shooter_experienced[is_team_A_shot==1]),proportion_exp_shooters_B = myprop(shooter_experienced[is_team_B_shot==1]),summarize)
+x$exp_shooter_ratio = x$proportion_exp_shooters_A / x$proportion_exp_shooters_B
+x

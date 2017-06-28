@@ -193,15 +193,15 @@ public class ParserRuner {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String extractFor = "pso";
+		String extractFor = "incident";
 		
-//		ParserRuner pr = new ParserRuner(extractFor);
+		ParserRuner pr = new ParserRuner(extractFor);
 //		ParserRuner pr = ParserRuner.hockeyRefParserRuner(extractFor);
-//		pr.parseAll();
+		pr.parseAll();
 //		pr.parseFromFile(Constants.weltFolder + "extractedCSV/games_with_incidents.csv");
 //		pr.parseFromFile("/home/aditya/epl_players_sorted");
 		
-		ParserRuner pr = ParserRuner.ChampionatParserRuner(extractFor);
-		pr.parseAll();
+//		ParserRuner pr = ParserRuner.ChampionatParserRuner(extractFor);
+//		pr.parseAll();
 	}
 }

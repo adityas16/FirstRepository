@@ -94,7 +94,7 @@ ddply(pso[pso$kickNumber<=10,],c("shooter_gd_sign","is_team_A_shot"),prop=myprop
 final_scores$rapid_fire = ifelse(final_scores$kickNumber>10,1,0)
 ddply(final_scores,c("rapid_fire"),p=myprop(is_team_A_winner),n=length(is_team_A_winner),summarise)
 
-ddply(pso,c("endIfMiss"),prop=myprop(isConverted),n=length(isConverted),summarise)
+ddply(pso,c("endIfScore"),prop=myprop(isConverted),n=length(isConverted),summarise)
 
 
 #get all transition proportions
@@ -157,3 +157,6 @@ lm_summary_table(glm(isConverted ~  is_team_A_shot * kickNumber + shooter_experi
 lm_summary_table(glm(isConverted ~  is_team_A_shot,family=binomial("logit")))
 
 lm_summary_table(glm(isConverted ~  is_team_A_shot * shooter_experienced * round4_6,data=df,family=binomial("logit")))
+
+
+
