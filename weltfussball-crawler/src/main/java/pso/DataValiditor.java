@@ -46,7 +46,7 @@ public class DataValiditor {
 		//		String baseFolder = Constants.hockeyrefFolder;
 		//		DataValiditor dv = iceHockey();
 
-		String baseFolder = Constants.championatFolder;
+		String baseFolder = Constants.weltFolder;
 		DataValiditor dv = football();
 
 		Map<String, List<Shot>> validGames = dv.getValidGames(baseFolder + "extractedCSV/pso_raw.csv");
@@ -63,6 +63,7 @@ public class DataValiditor {
 		for (Entry<String,List<Shot>> game : shotsByGame.entrySet()) {
 			if(!checkGame(game.getKey(),game.getValue())){
 				invalidGames.add(game.getKey().trim());
+				System.out.println(game.getKey().trim());
 			}
 			else{
 				validGames.put(game.getKey(), game.getValue());

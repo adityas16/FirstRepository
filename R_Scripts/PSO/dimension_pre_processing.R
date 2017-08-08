@@ -177,7 +177,7 @@ read_post_2003_games = function(){
 
 read_aer_games = function(){
   aer_competition_map = read.csv("/home/aditya/Research Data/other_papers/AER/competition_mapping.csv")
-  return(myjoin(games,aer_map,c1="competition",c2="my_competition",join_type = ""))
+  return(myjoin(games,aer_competition_map,c1="competition",c2="my_competition",join_type = ""))
 }
 
 read_manually_marked_competitions = function(){

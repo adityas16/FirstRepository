@@ -29,6 +29,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import pso.Constants;
 import pso.DBCache;
 import pso.FileUtils;
+import pso.WeltSchedulePenaltyParser;
 
 public class ParserRuner {
 	
@@ -203,5 +204,6 @@ public class ParserRuner {
 		
 //		ParserRuner pr = ParserRuner.ChampionatParserRuner(extractFor);
 //		pr.parseAll();
+//		WeltSchedulePenaltyParser.listMatchesWithNoPage();
 	}
 }

@@ -1,4 +1,0 @@
-for mysql driver:
-sudo apt-get install libmysqlclient-dev
-install.packages("RMySQL")
-library(RMySQL)

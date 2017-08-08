@@ -74,12 +74,12 @@ post_2003 = function(df){
 to_csv = function(df){
   write.csv(df,"/home/aditya/temp_files/temp.csv",row.names = F)
 }
-my_xtable = function(df){
+my_xtable = function(df,digits = 3){
   precision = rep(0,ncol(df)+1)
   for(i in 1:ncol(df)){
     if(is.numeric(df[,i])){
       if(sum(df[,i]%%1) > 0){
-        precision[i+1]=3
+        precision[i+1]=digits
       }
     }
   }

@@ -29,6 +29,7 @@ public class MatchIncidentParser implements Parser{
 		//		doc.title().split(regex)
 		List<Map<String,String>> incidents = new ArrayList<Map<String,String>>();
 		//TODO: Rectify this error. The home table is #3 only when there are incidents. Else, it is number 2.
+		Element awayTeamTable = getAwayTeamTable(doc);
 		Element homeTeamTable = getHomeTeamTable(doc);
 
 		//Add scored penalties
@@ -72,7 +73,15 @@ public class MatchIncidentParser implements Parser{
 			
 			String misser = incidentRow.childNode(1).childNode(0).attr("href").split("/")[2].replace('/', ' ').trim();
 			event.put("shooter", misser);
-			event.put("is_home", Utils.asInt(homeTeamTable.outerHtml().contains(misser))+"");
+			if(awayTeamTable.outerHtml().contains(misser)){
+				event.put("is_home", Utils.asInt(false) + "");
+			}
+			else if(homeTeamTable.outerHtml().contains(misser)){
+				event.put("is_home", Utils.asInt(true) + "");
+			}
+			else{
+				event.put("is_home", "NA");
+			}
 			event.put("is_miss", "1");
 			event.put("time", time + "");
 			event.putAll(getScoreAtTime(goals,time));
@@ -106,14 +115,14 @@ public class MatchIncidentParser implements Parser{
 		File input = new File(filename);
 		return parse(Jsoup.parse(input, "UTF-8", "http://example.com/"));
 	}
+	public static Element getAwayTeamTable(Document doc){
+		 Elements allTables = doc.getElementsByClass("box_zelle");
+		 return (Element) allTables.get(0).childNode(1).childNode(1);
+	}
+	
 	public static Element getHomeTeamTable(Document doc){
-		 Elements allTables = doc.getElementsByClass("standard_tabelle");
-		 for (Element table : allTables) {
-			if(table.outerHtml().contains("#646464")){
-				return table;
-			}
-		}
-		throw new RuntimeException("No squad info");
+		 Elements allTables = doc.select("td[width=50%][valign=top]");
+		 return (Element) allTables.get(0).childNode(1).childNode(1);
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -128,7 +137,12 @@ public class MatchIncidentParser implements Parser{
 		Utils.printRecords(mep.parseURI("europa-league-1961-1962-1-runde-hibernian-fc-os-belenenses"));
 		//Non penalty miss incident
 		Utils.printRecords(mep.parseURI("a-grupa-2015-2016-pfc-litex-lovech-pfc-ludogorets-razgrad"));
+		//Away penalty miss
+		Utils.printRecords(mep.parseURI("premier-league-2015-2016-west-ham-united-watford-fc"));
 		
+		//No Penalties
+		Utils.printRecords(mep.parseURI("a-junioren-bundesliga-nord-nordost-2005-2006-hamburger-sv-hannover-96"));
+
 		//error
 //		System.out.println(mep.parseURI("a-junioren-bundesliga-west-2004-2005-rot-weiss-essen-fortuna-duesseldorf"));
 

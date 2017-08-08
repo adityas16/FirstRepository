@@ -97,10 +97,10 @@ public class PenaltyShootoutParser implements Parser{
 	}
 	
 	private static int getCompetitionYear(String str){
-		Pattern pattern = Pattern.compile("\\w+([0-9]+)\\w+");
+		Pattern pattern = Pattern.compile(".*([0-9][0-9][0-9][0-9]).*");
 		Matcher matcher = pattern.matcher(str);
 		matcher.find();
-		return Integer.parseInt(matcher.group());
+		return Integer.parseInt(matcher.group(1));
 	}
 	
 //	public List<Shot> parseURI(String uri) throws IOException{
@@ -146,6 +146,6 @@ public class PenaltyShootoutParser implements Parser{
 	public static void main(String[] args) throws IOException {
 		DBCache cache = DBCache.weltpsoCache();
 		PenaltyShootoutParser psp = new PenaltyShootoutParser();
-		Utils.printRecords(psp.parse( cache.get("afc-champions-league-qual-2013-finale-buriram-united-brisbane-roar")));
+		Utils.printRecords(psp.parse( cache.get("u20-h-wm-2015-neuseeland-viertelfinale-brasilien-portugal")));
 	}
 }

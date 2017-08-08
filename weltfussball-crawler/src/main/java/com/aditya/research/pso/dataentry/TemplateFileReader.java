@@ -10,11 +10,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.aditya.research.pso.etl.StringUtils;
 import com.aditya.research.pso.parsers.GameParser;
+import com.aditya.research.pso.parsers.Utils;
 
 import pso.DataValiditor;
 import pso.FileUtils;
@@ -41,15 +44,16 @@ public class TemplateFileReader {
 	public static void main(String[] args) throws IOException {
 		//		List<String> lines = Files.readAllLines(Paths.get("/home/aditya/Research Data/DataEntry/PSO-data-input-template.csv"));
 		TemplateFileReader tfr = new TemplateFileReader("Copa del Rey");
-		tfr.checkShootouts("/home/aditya/Research Data/DataEntry/installment2/" + "installment2");
+		tfr.checkShootouts("/home/aditya/Research Data/DataEntry/installment4/" + "repaired");
 		//		tfr.checkShootouts("/home/aditya/Research Data/DataEntry/" + "test");
 	}
 
 	private  void checkShootouts(String fileName) throws IOException {
 		List<String> lines = Files.readAllLines(Paths.get(fileName + ".csv"));
-		List<Shot> allShootouts = new ArrayList<>(),invalid;
+		List<Shot> allShootouts = new ArrayList<>();
 		List<Map<String,String>> allGames = new ArrayList<>();
 		Set<String> uniqueGames = new HashSet<>();
+		Map<String,String> status = new TreeMap<>();
 
 		Matcher m1 = null;
 		Iterator<String> iter = lines.iterator();
@@ -60,14 +64,19 @@ public class TemplateFileReader {
 			gameMap.put("uri", "NA");
 			GameParser.initAllFields(gameMap);
 			gameMap.put("competition", competition);
-			extractDate(iter, gameMap);
+			if(!extractDate(iter, gameMap)){
+				break;
+			}
+			status.put(gameMap.get("ID"), "invalid");
 			List<Shot> shootout = new ArrayList<>();
 			try{
+				//				System.out.println("Extract shootout for" + getGameName(gameMap));
 				extractTeams(iter, gameMap);
 				shootout = extractShootout(iter);
 				setShootoutGameName(getGameName(gameMap), shootout);
 				validShootouts ++ ;
 			}catch(Exception e){
+				System.out.println(e.getMessage());
 				System.out.println("Invalid game : " + getGameName(gameMap));
 				invalidShootouts++;
 				continue;
@@ -77,6 +86,7 @@ public class TemplateFileReader {
 				allShootouts.addAll(shootout);
 				gameMap.put("uri", getGameName(gameMap));
 				allGames.add(gameMap);
+				status.put(gameMap.get("ID"), "valid");
 			}
 			else{
 				System.out.println("Duplicate game :" + getGameName(gameMap));
@@ -86,10 +96,17 @@ public class TemplateFileReader {
 		System.out.println("valid unique shootouts" + uniqueGames.size());
 		System.out.println("valid  shootouts" + validShootouts);
 		System.out.println("invalid shootouts" + invalidShootouts);
-		FileUtils.writeToCSV(fileName + "_validated.csv", allShootouts);
-		FileUtils.write(allGames,fileName + "_games.csv");
+//		for (String string : uniqueGames) {
+//			System.out.println(string);
+//		}
+//		for (Entry<String, String> string : status.entrySet()) {
+//			System.out.println(string.getKey() + "," + string.getValue());
+//		}
+				FileUtils.writeToCSV(fileName + "_validated.csv", allShootouts);
+				FileUtils.write(allGames,fileName + "_games.csv");
 	}
-
+	
+	
 	private void setShootoutGameName(String gameName,List<Shot> shootout){
 		for (Shot shot : shootout) {
 			shot.gameName = gameName;
@@ -99,28 +116,37 @@ public class TemplateFileReader {
 	}
 
 	private String getGameName(Map<String, String> gameMap) {
-		return gameMap.get("day") +"/"  + gameMap.get("month")+"/" + gameMap.get("year")+":" + gameMap.get("homeTeam") + "-" + gameMap.get("awayTeam");
+		return gameMap.get("ID") +"," + gameMap.get("day") +"/"  + gameMap.get("month")+"/" + gameMap.get("year")+":" + gameMap.get("homeTeam") + "-" + gameMap.get("awayTeam");
 	}
 
-	private  void extractDate(Iterator<String> iter, Map<String, String> gameMap) {
+	private  boolean extractDate(Iterator<String> iter, Map<String, String> gameMap) {
 		while(iter.hasNext()){
 			String line = iter.next();
-			Matcher m = Pattern.compile("date *,(\\d+),(\\d+),(\\d+)").matcher(line);
+			Matcher m = Pattern.compile("ID,(\\d+)").matcher(line);
 			if(m.find()){
-				gameMap.put("year", m.group(3));
-				gameMap.put("month", m.group(2));
-				gameMap.put("day", m.group(1));
-				break;
+				gameMap.put("ID",m.group(1));
+				line = iter.next();
+				m = Pattern.compile("date *,(\\d+),(\\d+),(\\d+)").matcher(line);
+				if(m.find()){
+					gameMap.put("year", m.group(3));
+					gameMap.put("month", m.group(2));
+					gameMap.put("day", m.group(1));
+					return true;
+				}
 			}
 			else if(line.replace(",", "").length() > 0){
 				//Searching for next date instead of throwing error
 				//				throw new RuntimeException("Couldn't find date");
 
 				if(line.contains("date")){
-					System.out.println("ERROR, no date found");
+					//					System.out.println("ERROR, no date found");
 				}
 			}
+			if(line.contains("date")){
+				System.out.println(line);
+			}
 		}
+		return false;
 	}
 
 	private  void extractTeams(Iterator<String> iter, Map<String, String> gameMap) {
@@ -153,14 +179,19 @@ public class TemplateFileReader {
 
 	private  List<Shot> extractShootout(Iterator<String> iter) {
 		List<Shot> shootout = new ArrayList<>();
-
+		int finalHomeScore=-1,finalAwayScore=-1;
 		while(iter.hasNext()){
 			String line = iter.next();
 			if(!line.contains("shootout")){
 				continue;
 			}
+			Matcher m = Pattern.compile("shootout,(\\d+),(\\d+)").matcher(StringUtils.toSimpleCharset(line));
+			if(m.find()){
+				finalHomeScore = Integer.parseInt(m.group(1));
+				finalAwayScore = Integer.parseInt(m.group(2));
+			}
 			line = iter.next();
-
+			
 			boolean isHomeShotFirst = false;
 			if(line.contains("Starting team,1")){
 				isHomeShotFirst = true;
@@ -170,6 +201,9 @@ public class TemplateFileReader {
 			}
 			else{
 				throw new RuntimeException("Invalid Starting team");
+			}
+			if(finalHomeScore>0){
+			System.out.println(finalHomeScore + "," + finalAwayScore + "," + Utils.asInt(isHomeShotFirst));
 			}
 			iter.next();
 

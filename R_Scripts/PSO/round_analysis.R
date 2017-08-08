@@ -98,3 +98,16 @@ x=x[order(x$n*-1),]
 my_xtable(x)
 
 binom.test(sum(final_scores$is_team_A_winner),nrow(final_scores))
+
+#Nils format
+g=sqldf("select * from x,final_scores as f where f.uri = x.uri")
+n=ddply(g,c("round_adjusted","gd","round_transition"),
+        tr_n=length(uri), n_team_a_win_POST_transition = sum(is_team_A_winner),summarise)
+
+f=ddply(g,c("round_adjusted","gd"),
+      n=length(uri), n_team_a_win_PRE_transition = sum(is_team_A_winner),summarise)
+
+k=sqldf("select n.*,f.n,f.n_team_a_win_PRE_transition from n,f where n.round_adjusted = f.round_adjusted and n.gd = f.gd")
+m=k[order(k$round_adjusted,k$gd*-1,k$round_transition*-1),]
+View(k)
+to_csv(k)

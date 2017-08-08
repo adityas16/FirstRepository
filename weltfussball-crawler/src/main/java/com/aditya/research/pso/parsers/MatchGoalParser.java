@@ -45,13 +45,27 @@ public class MatchGoalParser implements Parser{
 		for(int i=3;i<goalRows.childNodeSize();i=i+2){
 			Map<String,String> event = new HashMap<String, String>();
 			Node goalRow = goalRows.childNode(i);
+			if(goalRow.outerHtml().contains("<b>none</b>")){
+				continue;
+			}
 			String scoreStrings[] = goalRow.childNode(1).childNode(1).childNode(0).toString().split(":");
 
 
 			event.put("scorer",goalRow.childNode(3).childNode(1).attr("href").split("/")[2].replace('/', ' ').trim());
 			event.put("time", Utils.extractIntFromString(goalRow.childNode(3).childNode(2).toString().trim()) + "");
 			event.put("isPenalty", Utils.asInt(goalRow.childNode(3).childNode(2).toString().contains("enalty")) + "");
-			boolean isHomeGoal = goalRow.outerHtml().contains("dunkell");
+			String scorer = event.get("scorer");
+			boolean isHomeGoal = false;
+			if(MatchIncidentParser.getAwayTeamTable(doc).outerHtml().contains(scorer)){
+				isHomeGoal = false;
+			}
+			else if(MatchIncidentParser.getHomeTeamTable(doc).outerHtml().contains(scorer)){
+				isHomeGoal = true;
+			}
+			else{
+				throw new RuntimeException("Could not find which side scored");
+			}
+			
 			event.put("is_home", Utils.asInt(isHomeGoal)+"");
 			event.put("current_home_score",currentHomeScore + "");
 			event.put("current_away_score",currentAwayScore + "");
@@ -101,6 +115,10 @@ public class MatchGoalParser implements Parser{
 
 	public static void main(String[] args) throws IOException {
 		MatchGoalParser mep = new MatchGoalParser();
+		//No goals
+		mep.parseURI("a-grupa-2009-2010-botev-plovdiv-cherno-more-varna");
+		mep.parseURI("a-junioren-bundesliga-nord-nordost-2005-2006-hamburger-sv-sc-borea-dresden");
+		
 		mep.parseURI("europa-league-1961-1962-1-runde-hibernian-fc-os-belenenses");
 		mep.parseURI("a-grupa-2008-2009-botev-plovdiv-ofc-sliven");
 	}

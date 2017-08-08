@@ -80,3 +80,31 @@ ms_our_games$ms_id_away_team = ms_our_games$ms_id_away_teamAdj
 ms_for_test = ms_our_games[,c("uri","homeTeam","awayTeam","ms_id_home_team","ms_id_away_team","homeScore","awayScore","ms_id_home_score","ms_id_away_score")]
 
 write.csv(ms_for_test,"/home/aditya/Research Data/other_papers/Reconciliation/ms_our_games.csv",row.names = F)
+
+#Copa del rey Data gathering analysis
+#Pre 2003, matching with ms
+mapping = read.csv("/home/aditya/Research Data/other_papers/Reconciliation/mapped_data.csv",stringsAsFactors=FALSE)
+mapping$sequence = paste0(paste0(mapping$cdl_with_sequence_set_1_id, mapping$cdl_with_sequence_set_2_id
+),mapping$cdl_diff_seq_id)
+mapping$first_mover =  paste0(mapping$sequence, mapping$cdl_only_first_team_id)
+x=sqldf("select * from ms_games,mapping where ms_games.game_id = mapping.ms_id")
+x=x[x$competition_name=="Copa_del_Rey",]
+x$has_sequence = x$sequence!=""
+x$has_first_mover = x$first_mover !=""
+
+cdr_summary=ddply(x,c("season"),ms=length(ms_id),sequence=sum(sequence!=""),
+                  first_mover = sum(first_mover!=""),summarise)
+sum(cdr_summary$sequence)
+sum(cdr_summary$first_mover)
+ggplot() +
+  geom_line(data=cdr_summary,aes(x=season,y=ms,color = "ms"))+
+  geom_line(data=cdr_summary,aes(x=season,y=d,color = "us"))
+  geom_line(data=xb,aes(x=round_adjusted,y=prop),color="sienna1")+ 
+  scale_fill_manual(name = "Teams",
+                    values = c('dodgerblue2','sienna1'),
+                    labels = c('team A','team B'))+
+  scale_x_continuous(breaks=1:6)+
+  scale_y_continuous(limits = c(0.60,0.85))+
+  scale_size_area(limits = c(1,1525),max_size = 20)
+  
+  

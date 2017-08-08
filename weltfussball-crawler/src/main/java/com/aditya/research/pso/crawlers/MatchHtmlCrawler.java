@@ -29,7 +29,7 @@ public class MatchHtmlCrawler implements Runnable{
 	
 	public static MatchHtmlCrawler weltCrawler(){
 		MatchHtmlCrawler mhc = new MatchHtmlCrawler();
-		mhc.matchPageCache = DBCache.weltgameCache();
+		mhc.matchPageCache = DBCache.weltpsoCache();
 		mhc.seasonPageCache = DBCache.weltseasonCache();
 		mhc.competitionPageCache = DBCache.weltseasonCache();
 		mhc.seasonParser = new WeltSeasonParser();
@@ -104,7 +104,7 @@ public class MatchHtmlCrawler implements Runnable{
 	}
 	public void run() {
 		try {
-			crawlCompetitions(Constants.weltFolder + "competition_pages_set1");
+			crawlCompetitions(Constants.weltFolder + "competition_pages");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -112,20 +112,22 @@ public class MatchHtmlCrawler implements Runnable{
 	
 	public static void launchCrawler(int noOfThreads){
 		for(int i=1;i<=noOfThreads;i++){
-			Thread t = new Thread(new MatchHtmlCrawler());
+			Thread t = new Thread(MatchHtmlCrawler.weltCrawler());
 			t.start();
 		}
 	}
 	
 	public static void main(String[] args) throws IOException{
-		MatchHtmlCrawler mhc = MatchHtmlCrawler.ChampionatCrawler();
-		mhc.crawlSeasons(Constants.championatFolder + "seasons_russian_cup");
+		MatchHtmlCrawler mhc = MatchHtmlCrawler.weltCrawler();
+//		mhc.crawlSeasons(Constants.championatFolder + "seasons_russian_cup");
 //		mhc.crawlSeason("52/calendar/playoff.html");
 //		mhc.crawlCompetition("eng-league-cup-1998-1999");
 //		mhc.crawlCompetition(args[0]);
 //		mhc.crawlCompetitions(Constants.weltFolder + "competition_pages_set1");
-//		MatchHtmlCrawler.launchCrawler(4);	
-//		WeltSchedulePenaltyParser.listMatchesWithNoPage();
+//		MatchHtmlCrawler.launchCrawler(1);
+		mhc.run();
+		WeltSchedulePenaltyParser.listMatchesWithNoPage();
+		System.out.println("done");
 	}
 
 }
