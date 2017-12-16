@@ -9,13 +9,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.aditya.research.pso.parsers.IScheduleParser;
-
 import pso.Constants;
 import pso.DBCache;
 
 
-public class ScheduleParser implements IScheduleParser{
+public class ScheduleCrawler {
 	DBCache webPageCache = DBCache.weltseasonCache();
 	
 	public   List<String> parse(Document doc) throws IOException{
@@ -43,7 +41,7 @@ public class ScheduleParser implements IScheduleParser{
 	}
 	
 	public static void main(String[] args) throws IOException {
-		ScheduleParser scheduleCrawler = new ScheduleParser();
+		ScheduleCrawler scheduleCrawler = new ScheduleCrawler();
 		System.out.println(
 //		ScheduleParser.parseFile("/home/aditya/Research Data/weltfussball/index.html")
 		scheduleCrawler.parseURI("wm-2014-in-brasilien").size());

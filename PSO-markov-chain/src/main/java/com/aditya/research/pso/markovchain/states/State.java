@@ -1,9 +1,7 @@
 package com.aditya.research.pso.markovchain.states;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 
 import com.aditya.research.pso.common.Constants;
@@ -12,7 +10,7 @@ import com.sun.corba.se.impl.orbutil.closure.Constant;
 
 public class State {
 	public static int SHOTS_IN_REGULAR_PSO_PHASE = 5;
-	private static Set<String> allFinalStates = new HashSet<>();
+
 	public int na,nb,a,b;
 
 	public State() {
@@ -147,12 +145,10 @@ public class State {
 	private static void dfs(boolean[] kickSequence,int depth, Stack<State> path){
 		if(depth == kickSequence.length){
 			allPaths.addPath(new ArrayList<State>(path));
-			allFinalStates.add(path.get(depth - 1).a + "," + path.get(depth - 1).b);
 			return;
 		}
 		if(path.get(depth - 1).isEndState()){
 			allPaths.addPath(new ArrayList<State>(path));
-			allFinalStates.add(path.get(depth - 1).a + "," + path.get(depth - 1).b);
 			return;
 		}
 		State next = path.get(depth - 1).ifScored(kickSequence[depth]);
@@ -219,7 +215,6 @@ public class State {
 			}
 			System.out.println(";");
 		}
-		System.out.println(allFinalStates);
 	}
 
 }

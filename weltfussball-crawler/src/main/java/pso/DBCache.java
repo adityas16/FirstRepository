@@ -10,8 +10,6 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.Iterator;
 
-import org.apache.http.HttpException;
-import org.jsoup.Connection.Response;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -147,21 +145,6 @@ public class DBCache {
 	}
 	public static DBCache transfermrktKeeperPenaltyStatsCache(){
 		return new DBCache("keeper_penalty_stats", "transfermrkt",Constants.transfermrktURL);
-	}
-	
-	
-	public static DBCache ASATpsoCache(){
-		return new DBCache("pso", "ASAT",Constants.ASATURL + "/data/spiele/");
-	}
-	public static DBCache ASATseasonCache(){
-		return new DBCache("season", "ASAT",Constants.ASATURL + "/data/nat/");
-	}
-	
-	public static DBCache ChampionatpsoCache(){
-		return new DBCache("pso", "championat",Constants.championatURL);
-	}
-	public static DBCache ChampionatSeasonCache(){
-		return new DBCache("season", "championat",Constants.championatURL);
 	}
 	public static DBCache hockeyrefGameCache(){
 		DBCache dbCache = new DBCache("game", "hockeyref",Constants.hockeyrefURL + "boxscores/");

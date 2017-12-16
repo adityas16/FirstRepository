@@ -55,12 +55,12 @@
 		</dependency>
 
 
-		<!-- For bing -->
+		<!-- For bing
 		<dependency>
 			<groupId>it.unipi.di.acube</groupId>
 			<artifactId>bing-api-java</artifactId>
 			<version>0.4-SNAPSHOT</version>
-		</dependency>
+		</dependency> -->
 		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

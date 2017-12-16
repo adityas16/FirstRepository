@@ -36,31 +36,31 @@ public class PSOModel {
 
 	private float rapidFire(State s) {
 		//This needs to be updated based on the new rapid fire trnasition matrix
-		throw new UnsupportedOperationException();
+//		throw new UnsupportedOperationException();
 		
-//		if(s.na > s.nb){
-//			//A has taken the last shot
-//			if(s.gd()>0){
-//				//b scores, next round + b misses
-//				return pbRapidFire * prRapidFire + (1-pbRapidFire);
-//			}
-//			else{
-//				//B misses, go to next round
-//				return (1-pbRapidFire) * prRapidFire;
-//			}
-//		}
-//		else{
-//			//B has taken the last shot
-//			if(s.gd()>0){
-//				return 1f;
-//			}
-//			else if(s.gd()<0){
-//				return 0;
-//			}
-//			else{
-//				return prRapidFire;
-//			}
-//		}
+		if(s.na > s.nb){
+			//A has taken the last shot
+			if(s.gd()>0){
+				//b scores, next round + b misses
+				return pbRapidFire * prRapidFire + (1-pbRapidFire);
+			}
+			else{
+				//B misses, go to next round
+				return (1-pbRapidFire) * prRapidFire;
+			}
+		}
+		else{
+			//B has taken the last shot
+			if(s.gd()>0){
+				return 1f;
+			}
+			else if(s.gd()<0){
+				return 0;
+			}
+			else{
+				return prRapidFire;
+			}
+		}
 	}
 	
 	public float getRecursiveRapidFire(){

@@ -40,6 +40,9 @@ public class Shot{
 		return strings;
 	}
 
+	public int round() {
+		return (kickNumber-1)/2 + 1;
+	}
 	public static String[] headers(){
 		String [] strings = {"game_id","competition","homeScore","awayScore" , "isConverted" , "homeShotFirst", "kickNumber", "gameName", "year","stage" ,"striker","uri"};
 		return strings;

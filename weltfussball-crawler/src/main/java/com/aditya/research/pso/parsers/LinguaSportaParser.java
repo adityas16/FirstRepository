@@ -80,7 +80,7 @@ public class LinguaSportaParser {
 		Pattern p4 = Pattern.compile("<font size=\"(\\d+)\">(.*) - ([\\p{Alnum}\\p{Blank}]*)</font>");
 
 		Matcher m;
-		for(int i =71;i<=117;i++){
+		for(int i =71;i<=116;i++){
 			//			System.out.println("Reading file : " + i);
 			File f = new File("/home/aditya/Research Data/linguasport/"+i+".htm");
 			Document doc = Jsoup.parse(f, "UTF-8", "http://example.com/");
@@ -184,7 +184,7 @@ public class LinguaSportaParser {
 		map.put("1/2", "Semi Final");
 		map.put("FINAL", "Final");
 
-		for(int i =71;i<=117;i++){
+		for(int i =71;i<=116;i++){
 			List<String> all = new ArrayList<String>();
 
 			//			System.out.println("wget www.linguasport.com/futbol/nacional/copa/copa" + i + ".htm -O " + i + ".htm");

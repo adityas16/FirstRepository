@@ -9,6 +9,7 @@ public class PSOModelTest {
 	PSOModel psoModel = new PSOModel();
 	
 	@Test
+	//Score probability SHOUL BE SET TO 0.74 for this to work
 	public void testFromNilsSheet(){
 		Assert.assertEquals(0.5f, psoModel.getProbAWin(0, 0, 0),0.00001f);
 		Assert.assertEquals(0.5716759f, psoModel.getProbAWin(1, 1, 0),0.00001f);

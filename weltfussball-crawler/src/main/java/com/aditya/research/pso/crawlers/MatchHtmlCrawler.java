@@ -9,54 +9,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.aditya.research.pso.parsers.IScheduleParser;
-import com.aditya.research.pso.parsers.ISeasonParser;
 import com.aditya.research.pso.parsers.Utils;
-import com.aditya.research.pso.parsers.austriasoccer.ASATScheduleParser;
-import com.aditya.research.pso.parsers.championat.ChampionatScheduleParser;
 
 import pso.Constants;
 import pso.DBCache;
 import pso.FileSystemCache;
-import pso.WeltSchedulePenaltyParser;
-import pso.WeltSeasonParser;
+import pso.SchedulePenaltyParser;
+import pso.SeasonParser;
 
 public class MatchHtmlCrawler implements Runnable{
-	DBCache matchPageCache,seasonPageCache,competitionPageCache;
+	SeasonParser seasonParser = new SeasonParser();
 	
-	ISeasonParser seasonParser;
-	IScheduleParser scheduleCrawler;
-	
-	public static MatchHtmlCrawler weltCrawler(){
-		MatchHtmlCrawler mhc = new MatchHtmlCrawler();
-		mhc.matchPageCache = DBCache.weltpsoCache();
-		mhc.seasonPageCache = DBCache.weltseasonCache();
-		mhc.competitionPageCache = DBCache.weltseasonCache();
-		mhc.seasonParser = new WeltSeasonParser();
-		mhc.scheduleCrawler = new WeltSchedulePenaltyParser();
-		return mhc;
-	}
-	
-	public static MatchHtmlCrawler ASATCrawler(){
-		MatchHtmlCrawler mhc = new MatchHtmlCrawler();
-		mhc.matchPageCache = DBCache.ASATpsoCache();
-		mhc.seasonPageCache = DBCache.ASATseasonCache();
-		mhc.scheduleCrawler = new ASATScheduleParser();
-		return mhc;
-	}
-	
-	public static MatchHtmlCrawler ChampionatCrawler(){
-		MatchHtmlCrawler mhc = new MatchHtmlCrawler();
-		mhc.matchPageCache = DBCache.ChampionatpsoCache();
-		mhc.seasonPageCache = DBCache.ChampionatSeasonCache();
-		mhc.scheduleCrawler = new ChampionatScheduleParser();
-		return mhc;
-	}
-	
-	//Welt Init
-	
+//	DBCache matchPageCache = DBCache.weltgameCache();
 //	ScheduleCrawler scheduleCrawler = new ScheduleCrawler();
-//	FileSystemCache matchPageCache = new FileSystemCache("/home/aditya/Research Data/weltfussball/friendlies/", Constants.worldfootballURL + Constants.report + "/");
+	
+	DBCache matchPageCache = DBCache.weltpsoCache();
+	SchedulePenaltyParser scheduleCrawler = new SchedulePenaltyParser();
+//	FileSystemCache matchPageCache = new FileSystemCach																		e("/home/aditya/Research Data/weltfussball/friendlies/", Constants.worldfootballURL + Constants.report + "/");
 	
 	public void crawlSeasons(String path) throws IOException{
 		
@@ -70,25 +39,26 @@ public class MatchHtmlCrawler implements Runnable{
 	}
 	private void crawlSeason(String seasonURI) {
 		try{
-			List<String> matchURIs = scheduleCrawler.parse(seasonPageCache.get(seasonURI));
+			List<String> matchURIs = scheduleCrawler.parseURI(seasonURI);
 			for (String matchURI : Utils.shuffle(matchURIs)) {
 				matchPageCache.get(matchURI);  
-//				System.out.println(matchURI);
+				System.out.println(matchURI);
 			}
+//			System.out.println(seasonURI);
 		}
 		catch(Exception e){
 			System.out.println("failed" + seasonURI);
 		}
 	}
-	private void crawlCompetitions(String path) throws IOException {
-		List<String> competitionURIsList = Files.readAllLines(Paths.get(path));
+	private void crawlCompetitions() throws IOException {
+		List<String> competitionURIsList = Files.readAllLines(Paths.get(Constants.weltFolder + "competition_pages"));
 			for (String competition_uri : Utils.shuffle(competitionURIsList)) {
 			crawlCompetition(competition_uri);
 		}
 	}
 	private void crawlCompetition(String competition_uri) throws IOException {
 		try{
-			List<String> seasons = Utils.shuffle(seasonParser.parse(competitionPageCache.get(competition_uri)));
+			List<String> seasons = Utils.shuffle(seasonParser.parse(competition_uri));
 			for (String seasonURI : seasons) {
 				try{
 				crawlSeason(seasonURI);
@@ -104,7 +74,7 @@ public class MatchHtmlCrawler implements Runnable{
 	}
 	public void run() {
 		try {
-			crawlCompetitions(Constants.weltFolder + "competition_pages");
+			crawlCompetitions();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -112,22 +82,18 @@ public class MatchHtmlCrawler implements Runnable{
 	
 	public static void launchCrawler(int noOfThreads){
 		for(int i=1;i<=noOfThreads;i++){
-			Thread t = new Thread(MatchHtmlCrawler.weltCrawler());
+			Thread t = new Thread(new MatchHtmlCrawler());
 			t.start();
 		}
 	}
 	
 	public static void main(String[] args) throws IOException{
-		MatchHtmlCrawler mhc = MatchHtmlCrawler.weltCrawler();
-//		mhc.crawlSeasons(Constants.championatFolder + "seasons_russian_cup");
-//		mhc.crawlSeason("52/calendar/playoff.html");
-//		mhc.crawlCompetition("eng-league-cup-1998-1999");
+		MatchHtmlCrawler mhc = new MatchHtmlCrawler();
+//		mhc.crawlSeason("eng-fa-community-shield-2017");
+//		mhc.crawlCompetition("eng-fa-community-shield-2017");
 //		mhc.crawlCompetition(args[0]);
-//		mhc.crawlCompetitions(Constants.weltFolder + "competition_pages_set1");
-//		MatchHtmlCrawler.launchCrawler(1);
-		mhc.run();
-		WeltSchedulePenaltyParser.listMatchesWithNoPage();
-		System.out.println("done");
+//		mhc.crawlCompetitions();
+		MatchHtmlCrawler.launchCrawler(4);
 	}
 
 }

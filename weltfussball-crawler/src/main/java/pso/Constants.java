@@ -1,22 +1,24 @@
 package pso;
 
 public class Constants {
-	public static String weltFolder = "/home/aditya/Research Data/weltfussball/";
-	public static String transermrktFolder = "/home/aditya/Research Data/transfermrkt/";
-	public static String linguaSportFolder = "/home/aditya/Research Data/linguasport/";
-	public static String hockeyrefFolder = "/home/aditya/Research Data/hockeyref/";
-	public static String NHLFolder = "/home/aditya/Research Data/NHL/";
-	public static String ASATFolder = "/home/aditya/Research Data/ASAT/";
-	public static String BLFolder = "/home/aditya/Research Data/BL/";
-	public static String championatFolder = "/home/aditya/Research Data/championat/";
+	//Linux
+	public static String BASE_FOLDER = "/home/aditya/Dropbox/Research/Link to Research Data/";
+	
+	//Windows
+//	public static String BASE_FOLDER = "C:\\Users\\aditya\\Dropbox\\Research\\Link to Research Data\\";
+	
+	public static String weltFolder = BASE_FOLDER + "weltfussball/";
+	public static String combined = BASE_FOLDER + "combined/";
+	public static String transermrktFolder = BASE_FOLDER + "transfermrkt/";
+	public static String linguaSportFolder = BASE_FOLDER + "linguasport/";
+	public static String hockeyrefFolder = BASE_FOLDER + "hockeyref/";
+	public static String NHLFolder = BASE_FOLDER + "NHL/";
 	
 	public static String extractedCSV = weltFolder + "extractedCSV/";
 	
 	public static String worldfootballURL = "http://www.worldfootball.net/";
 	public static String transfermrktURL = "http://www.transfermarkt.com/";
 	public static String hockeyrefURL = "http://www.hockey-reference.com/";
-	public static String ASATURL = "http://www.austriasoccer.at/";
-	public static String championatURL = "http://www.championat.com/football/_russiacup/";
 	
 	public static String all_matches = "all_matches";
 	public static String pso = "pso";

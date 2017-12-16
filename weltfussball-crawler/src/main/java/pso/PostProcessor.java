@@ -34,7 +34,8 @@ public class PostProcessor {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		String fileName = "processedCSV/pso_extended.csv";
+		String myBaseFolder = Constants.combined;
+		String fileName = myBaseFolder +  "processedCSV/pso_extended.csv";
 
 		//m.transitionMatrix = new DataBasedTransitionMatrix(Constants.weltFolder + "TransitionMatrixData.csv");
 		
@@ -44,8 +45,13 @@ public class PostProcessor {
 		
 		for (Shot shot : FileUtils.readAllShots(fileName)) {
 			Map<String,String> output = new LinkedHashMap<String, String>();
-			output.put("shot_id", shot.uri + '_' + shot.kickNumber);
+			output.put("uri", shot.uri);
+			output.put("kickNumber", shot.kickNumber + "");
+
 			
+			output.put("round","NA");
+			output.put("team_A_score_pre_shot","NA");
+			output.put("team_B_score_pre_shot","NA");
 			output.put("pr_A_pre_shot","NA");
 			output.put("pr_A_if_scored","NA");
 			output.put("pr_A_if_missed","NA");
@@ -64,6 +70,9 @@ public class PostProcessor {
 			if(isCertain(pAIfMissed)){
 				endIfMiss = 1;
 			}
+			output.put("round",shot.round() + "");
+			output.put("team_A_score_pre_shot",previous.a + "");
+			output.put("team_B_score_pre_shot",previous.b + "");
 			output.put("pr_A_pre_shot",pAPreShot+ "");
 			output.put("pr_A_if_scored",pAIfscored + "");
 			output.put("pr_A_if_missed",pAIfMissed + "");
@@ -72,7 +81,7 @@ public class PostProcessor {
 			
 			results.add(output);
 		}
-		FileUtils.write(results, Constants.weltFolder + "processedCSV/pso_model_output.csv");
+		FileUtils.write(results, myBaseFolder + "processedCSV/pso_model_output.csv");
 	}
 	private static boolean isCertain(float p){
 		return p>0.9999f || p<0.00001f;

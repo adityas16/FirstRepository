@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class FileUtils {
 	public static Map<String, List<Shot>> readShootoutsByMatch(String fileName) throws IOException, FileNotFoundException {
 		CSVParser csvParser = CSVFormat.EXCEL.withHeader().parse(new FileReader(new File(fileName)));
 		List<CSVRecord> records = csvParser.getRecords();
-		Map<String, List<Shot>> shotsByGame = new HashMap<String, List<Shot>>();
+		Map<String, List<Shot>> shotsByGame = new LinkedHashMap<String, List<Shot>>();
 		String currentGame = "";
 		List<Shot> currentGameShots = new ArrayList<Shot>();
 
@@ -37,9 +38,19 @@ public class FileUtils {
 			s.homeScore = Integer.parseInt(record.get("homeScore"));
 			s.awayScore = Integer.parseInt(record.get("awayScore"));
 			s.kickNumber = Integer.parseInt(record.get("kickNumber"));
-			s.gameId = record.get("game_id");
+			try {
+				s.gameId = record.get("game_id");
+			}
+			catch(IllegalArgumentException i) {
+				s.gameId = record.get("uri");
+			}
 			s.gameName = currentGame;
-			s.striker = record.get("shooter");
+			try {
+				s.striker = record.get("shooter");
+			}
+			catch(IllegalArgumentException i) {
+				s.striker = record.get("striker");
+			}
 			s.stage = record.get("stage");
 			s.year = Integer.parseInt(record.get("year"));
 			s.competition = record.get("competition");
@@ -50,9 +61,9 @@ public class FileUtils {
 		shotsByGame.put(currentGame, currentGameShots);
 		return shotsByGame;
 	}
-	
+
 	public static List<Shot> readAllShots(String fileName) throws FileNotFoundException, IOException{
-		Map<String, List<Shot>> shotsByMatch = readShootoutsByMatch(Constants.weltFolder + fileName);
+		Map<String, List<Shot>> shotsByMatch = readShootoutsByMatch(fileName);
 		List<Shot> allShots = new ArrayList<Shot>();
 		for (List<Shot> gameShots : shotsByMatch.values()) {
 			for (Shot shot : gameShots) {
@@ -61,7 +72,7 @@ public class FileUtils {
 		}
 		return allShots;
 	}
-	
+
 	public static void writeToCSV(String fileName,List<Shot> shots) throws IOException{
 		CSVWriter writer = new CSVWriter(new FileWriter(fileName));
 		writer.writeNext(shots.get(0).headers());
