@@ -1,9 +1,8 @@
-source("./R_Code/PSO/utils.R")
-source("./R_Code/PSO/dimension_pre_processing.R")
+source(paste0(R_CODE,"/PSO/utils.R"))
+source(paste0(R_CODE,"/PSO/dimension_pre_processing.R"))
+WELT_FOLDER = paste(BASE_FOLDER,"weltfussball",sep="/")
 
 load_all = function(){
-  BASE_FOLDER="/home/aditya/Research Data/"
-  WELT_FOLDER = paste(BASE_FOLDER,"weltfussball",sep="/")
   TRANSFERMRKT_FOLDER = paste(BASE_FOLDER,"transfermrkt",sep="/")
   
   assign("games" ,read_games(),envir = .GlobalEnv)

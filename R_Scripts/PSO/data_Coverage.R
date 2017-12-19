@@ -1,10 +1,10 @@
-source("./R_Code/PSO/utils.R")
-source("./R_Code/PSO/dimension_pre_processing.R")
+source(paste0(R_CODE,"/PSO/utils.R"))
+source(paste0(R_CODE,"/PSO/dimension_pre_processing.R"))
+source(paste0(R_CODE,"/PSO/data_loader.R"))
 
 library(plyr)
 library(ggplot2)
 
-source("./R_Code/PSO/data_loader.R")
 load_all()
 
 nrow(odds)
@@ -95,8 +95,8 @@ aer = read.csv("/home/aditya/Research Data/other_papers/aer.csv")
 
 
 #Comparison with AER book
-pre_2013 = final_scores[final_scores$season<2013,]
-x = ddply(pre_2013,c("competition"),summarise,total_matches=length(competition))
+pre_2013 = final_scores[final_scores$year<2013| (final_scores$year==2013 & final_scores$month<=6),]
+x = ddply(pre_2013,c("competition_aer_competition"),summarise,total_matches=length(competition))
 x[order(x$total_matches * -1),]
 
 ms = read.csv("/home/aditya/Research Data/other_papers/management_science_data_summary.csv")

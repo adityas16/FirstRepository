@@ -1,7 +1,6 @@
-source("./R_Code/PSO/utils.R")
+source(paste0(R_CODE,"/PSO/utils.R"))
 require(gridExtra)
 
-BASE_FOLDER="/home/aditya/Research Data/"
 DATA_FOLDER = paste(BASE_FOLDER,"weltfussball",sep="/")
 TRANSFERMRKT_FOLDER = paste(BASE_FOLDER,"transfermrkt",sep="/")
 R_OUTPUT_FOLDER = paste(BASE_FOLDER,"R_output",sep="/")
@@ -93,7 +92,7 @@ read_final_scores = function(){
   games = read_games()
   final_scores = pso[pso$is_last_shot==1,]
   final_scores$is_home_winner = ifelse(final_scores$homeScore> final_scores$awayScore,1,0)
-  
+  final_scores_year = NULL
   return(myjoin(final_scores,games,join_type=""))
 }
 read_in_play_penalties = function(){
@@ -176,8 +175,13 @@ read_post_2003_games = function(){
 }
 
 read_aer_games = function(){
-  aer_competition_map = read.csv("/home/aditya/Research Data/other_papers/AER/competition_mapping.csv")
+  aer_competition_map = read.csv(paste0(BASE_FOLDER,"/other_papers/AER/competition_mapping.csv"))
   return(myjoin(games,aer_competition_map,c1="competition",c2="my_competition",join_type = ""))
+}
+
+read_senior_men_games = function(){
+  senior_men_map = read.csv(paste0(WELT_FOLDER, "/extractedCSV/senior_male_competitions.csv"))
+  return(myjoin(games,senior_men_map,c1="competition",c2="competition",join_type = ""))
 }
 
 read_manually_marked_competitions = function(){

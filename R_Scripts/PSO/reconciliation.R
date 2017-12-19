@@ -107,4 +107,6 @@ ggplot() +
   scale_y_continuous(limits = c(0.60,0.85))+
   scale_size_area(limits = c(1,1525),max_size = 20)
   
+  #Create sumnmary table as per AER competitions
   
+  ddply(final_scores,c("competition_aer_competition"),n=length(uri),summarize)

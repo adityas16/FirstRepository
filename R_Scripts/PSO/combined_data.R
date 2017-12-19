@@ -3,7 +3,7 @@ games_raw = read.csv(paste(DATA_FOLDER,"games_raw.csv",sep="/"))
 
 #Filter games to remove duplicates across cources
 #remove copa del rey before 2003
-games = games_raw[!(games_raw$competition=="Copa del Rey"  & games_raw$source == "weltfussball"),]
+games = games_raw[!(games_raw$competition=="Copa del Rey"  & games_raw$source == "weltfussball" & games_raw$season <2016),]
 
 write.csv(games,paste(DATA_FOLDER,"/extractedCSV/games.csv",sep="/"),row.names = F)
 load_all();
