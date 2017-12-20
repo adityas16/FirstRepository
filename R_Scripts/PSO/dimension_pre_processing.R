@@ -44,6 +44,8 @@ read_pso <- function (){
   pso$kickNumber_adjusted = pso$kickNumber
   pso$kickNumber_adjusted[pso$kickNumber>10 & pso$kickNumber %%2 ==1] = 11
   pso$kickNumber_adjusted[pso$kickNumber>10 & pso$kickNumber %%2 ==0] = 12
+  pso$is_prev_converted = c(0,head(pso$isConverted,-1))
+  pso$is_prev_converted[pso$isFirstShot==1]=0
   uri = pso[pso$is_last_shot == T,]$uri
   df = data.frame(uri)
   #A takes extra shot?
