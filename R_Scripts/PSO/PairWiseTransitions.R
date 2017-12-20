@@ -55,11 +55,91 @@ create_pairwise_transitions_table = function(shootouts){
 }
 
 
+#Different approach, counting edges instead of nodes, and one line per round,gd
+#append previous shot result
+
+count_edges=function(shootouts,team_A_shot,
+                     converted,
+                     prev_converted){
+  return(ddply(shootouts[shootouts$is_team_A_shot==team_A_shot & shootouts$isConverted==converted & shootouts$is_prev_converted == prev_converted,],
+               c("round_adjusted","gd"),n=length(uri),summarise))
+}
+
+append_count = function(x,y,colname = "n1a"){
+  x=sqldf("select x.*,y.n from x left join y on x.round_adjusted = y.round_adjusted and x.gd=y.gd")
+  x$n[is.na(x$n)]=0
+  colnames(x)[length(colnames(x))] = colname
+  return (x)
+}
+
+create_binom_trinom_table = function(shootouts){
+  x=ddply(shootouts[shootouts$is_team_A_shot==1,],c("round_adjusted","gd"),n0=length(uri),summarise)
+  x=x[order(x$round_adjusted,x$gd *-1),]
+  
+  x=append_count(x,count_edges(shootouts,1,1,0),"n1a")
+  x=append_count(x,count_edges(shootouts,1,1,1),"n1b")
+  x$n1=x$n1a+x$n1b
+  x$n1a=NULL
+  x$n1b=NULL
+  
+  x=append_count(x,count_edges(shootouts,1,0,0),"n2a")
+  x=append_count(x,count_edges(shootouts,1,0,1),"n2b")
+  x$n2=x$n2a+x$n2b
+  x$n2a=NULL
+  x$n2b=NULL
+  
+  
+  x=append_count(x,count_edges(shootouts,0,0,0),"n6")
+  x=append_count(x,count_edges(shootouts,0,1,0),"n5")
+  
+  x=append_count(x,count_edges(shootouts,0,0,1),"n12")
+  x=append_count(x,count_edges(shootouts,0,1,1),"n11")
+  
+  y=count_edges(shootouts,0,0,1)
+  y$gd = y$gd -1
+  x=append_count(x,y,"n4")
+  y=count_edges(shootouts,0,1,1)
+  y$gd = y$gd -1
+  x=append_count(x,y,"n3")
+  
+  y=count_edges(shootouts,0,0,0)
+  y$gd = y$gd -1
+  x=append_count(x,y,"n10")
+  y=count_edges(shootouts,0,1,0)
+  y$gd = y$gd -1
+  x=append_count(x,y,"n9")
+  
+  #tests
+  x$n1+x$n2 - x$n0
+  x$n4+x$n3 - x$n1
+  x$n5+x$n6 - x$n2
+  
+  x$n_tri_up = x$n4
+  x$n_tri_0 = x$n3+x$n6
+  x$n_tri_0[x$n3==0 | x$n6==0]=0
+  x$n_tri_down = x$n5
+  x$has_trinomial=(x$n_tri_up !=0 & x$n_tri_down !=0 & x$n_tri_0 !=0)
+  tri_total = x$n_tri_up + x$n_tri_down + x$n_tri_0
+  x$tri_up = x$n_tri_up / tri_total
+  x$tri_0 = x$n_tri_0 / tri_total
+  x$tri_down = x$n_tri_down / tri_total
+  
+  
+  x$p_s = x$n1/x$n0
+  x$q_s = x$n5/(x$n5 + x$n6)
+  x$q_splus1 = x$n3/(x$n3 + x$n4)
+  
+  x$q_prime_s = (x$n11 + x$n5)/(x$n5 + x$n6 + x$n11 + x$n12)
+  x$q_prime_splus1 = (x$n3 + x$n9)/(x$n3 + x$n4 + x$n9 + x$n10)
+  return(x)
+}
+
+
+#Setup the shootouts to consider
 #For AER competitions only
 load_all()
 pso = myjoin(pso,read_aer_games(),join_type="")
 
-#pso = myjoin(pso,read_games(),join_type="")
 
 #For senior men competitions only
 load_all()
@@ -80,7 +160,7 @@ colnames(filtered_games)=c("uri")
 
 k=data.frame()
 set.seed(42);
-iteration_seeds = sample(1000000,size=10000)
+iteration_seeds = sample(1000000,size=100000)
 for(i in 1:1000){
   set.seed(iteration_seeds[i])
   itertation_games = data.frame(filtered_games[sample(1:nrow(filtered_games),replace = T),])
@@ -88,7 +168,8 @@ for(i in 1:1000){
   itertation_games$unique_game_id = 1:nrow(itertation_games)
   
   iteration_shootouts = myjoin(pso,itertation_games,join_type="")
-  iteration_k=create_pairwise_transitions_table(iteration_shootouts)
+  iteration_k=create_binom_trinom_table(iteration_shootouts)
+  #iteration_k=create_pairwise_transitions_table(iteration_shootouts)
   #iteration_k=create_binomial_transitions_table(iteration_shootouts)
   iteration_k$iteration_number = i
   k=rbind(k,iteration_k)
@@ -104,85 +185,4 @@ x=read.csv("/home/aditya/Dropbox/penalties/Analysis/By Round/PairWiseTransitions
 y=ddply(x,c("j","s","c"),tr_pr=mean(tr_probability),qs_1=mean(q_s_1),n=mean(n),summarize)
 to_csv(y[order(y$j,y$s * -1,y$c * -1),])
 
-
-#Different approach, counting edges instead of nodes
-#append previous shot result
-pso$is_prev_converted = c(0,head(pso$isConverted,-1))
-pso$is_prev_converted[pso$isFirstShot==1]=0
-
-
-count_edges=function(team_A_shot,
-                     converted,
-                     prev_converted){
-return(ddply(pso[pso$is_team_A_shot==team_A_shot & pso$isConverted==converted & pso$is_prev_converted == prev_converted,],
-             c("round_adjusted","gd"),n=length(uri),summarise))
-}
-
-append_count = function(x,y,colname = "n1a"){
-x=sqldf("select x.*,y.n from x left join y on x.round_adjusted = y.round_adjusted and x.gd=y.gd")
-x$n[is.na(x$n)]=0
-colnames(x)[length(colnames(x))] = colname
-return (x)
-}
-
-x=ddply(pso[pso$is_team_A_shot==1,],c("round_adjusted","gd"),n0=length(uri),summarise)
-
-x=append_count(x,count_edges(1,1,0),"n1a")
-x=append_count(x,count_edges(1,1,1),"n1b")
-x$n1=x$n1a+x$n1b
-x$n1a=NULL
-x$n1b=NULL
-
-x=append_count(x,count_edges(1,0,0),"n2a")
-x=append_count(x,count_edges(1,0,1),"n2b")
-x$n2=x$n2a+x$n2b
-x$n2a=NULL
-x$n2b=NULL
-
-
-x=append_count(x,count_edges(0,0,0),"n6")
-x=append_count(x,count_edges(0,1,0),"n5")
-
-x=append_count(x,count_edges(0,0,1),"n12")
-x=append_count(x,count_edges(0,1,1),"n11")
-
-y=count_edges(0,0,1)
-y$gd = y$gd -1
-x=append_count(x,y,"n4")
-y=count_edges(0,1,1)
-y$gd = y$gd -1
-x=append_count(x,y,"n3")
-
-y=count_edges(0,0,0)
-y$gd = y$gd -1
-x=append_count(x,y,"n10")
-y=count_edges(0,1,0)
-y$gd = y$gd -1
-x=append_count(x,y,"n9")
-
-#tests
-x$n1+x$n2 - x$n0
-x$n4+x$n3 - x$n1
-x$n5+x$n6 - x$n2
-
-x$n_tri_up = x$n4
-x$n_tri_0 = x$n3+x$n6
-x$n_tri_0[x$n3==0 | x$n6==0]=0
-x$n_tri_down = x$n5
-x$has_trinomial=(x$n_tri_up !=0 & x$n_tri_down !=0 & x$n_tri_0 !=0)
-tri_total = x$n_tri_up + x$n_tri_down + x$n_tri_0
-x$tri_up = x$n_tri_up / tri_total
-x$tri_0 = x$n_tri_0 / tri_total
-x$tri_down = x$n_tri_down / tri_total
-
-
-x$p_s = x$n1/x$n0
-x$q_s = x$n5/(x$n5 + x$n6)
-x$q_splus1 = x$n3/(x$n3 + x$n4)
-
-x$q_prime_s = (x$n11 + x$n5)/(x$n5 + x$n6 + x$n11 + x$n12)
-x$q_prime_splus1 = (x$n3 + x$n9)/(x$n3 + x$n4 + x$n9 + x$n10)
-
-x$e2 = x$n4 + x$n3
-x$e3 = x$n5 + x$n6
 
