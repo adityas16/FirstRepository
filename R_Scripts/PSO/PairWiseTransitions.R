@@ -73,7 +73,7 @@ append_count = function(x,y,colname = "n1a"){
 }
 
 create_binom_trinom_table = function(shootouts){
-  x=ddply(shootouts[shootouts$is_team_A_shot==1,],c("round_adjusted","gd"),n0=length(uri),summarise)
+  x=ddply(shootouts[shootouts$is_team_A_shot==1,],c("round_adjusted","gd"),n0=length(uri),n_team_A_wins=sum(is_team_A_winner),summarise)
   x=x[order(x$round_adjusted,x$gd *-1),]
   
   x=append_count(x,count_edges(shootouts,1,1,0),"n1a")
@@ -134,50 +134,56 @@ create_binom_trinom_table = function(shootouts){
   return(x)
 }
 
+run_bootstrap = function(num_of_iterations,table_generator){
+  filtered_games = data.frame(pso[pso$is_last_shot==1,c("uri")])
+  colnames(filtered_games)=c("uri")
+  
+  k=data.frame()
+  set.seed(42);
+  iteration_seeds = sample(1000000,size=100000)
+  for(i in 1:num_of_iterations){
+    set.seed(iteration_seeds[i])
+    itertation_games = data.frame(filtered_games[sample(1:nrow(filtered_games),replace = T),])
+    colnames(itertation_games)=c("uri")
+    itertation_games$unique_game_id = 1:nrow(itertation_games)
+    
+    iteration_shootouts = myjoin(pso,itertation_games,join_type="")
+    iteration_k=table_generator(iteration_shootouts)
+    #iteration_k=create_pairwise_transitions_table(iteration_shootouts)
+    #iteration_k=create_binomial_transitions_table(iteration_shootouts)
+    iteration_k$iteration_number = i
+    k=rbind(k,iteration_k)
+    print(i)
+  }
+  k=k[,c(length(k),1:length(k-1))]
+  k$iteration_number.1=NULL
+  return(k)
+}
 
+num_iterations=1000
 #Setup the shootouts to consider
 #For AER competitions only
 load_all()
 pso = myjoin(pso,read_aer_games(),join_type="")
-
+a=run_bootstrap(num_iterations,create_binom_trinom_table)
+to_csv(a,"AER_1000")
 
 #For senior men competitions only
 load_all()
 pso = myjoin(pso,read_senior_men_games(),join_type="")
-
 shootouts=pso
 shootouts$unique_game_id=shootouts$uri
 k=create_pairwise_transition_table(shootouts)
 to_csv(k[order(k$j,k$s * -1,k$c * -1),])
 
+a=run_bootstrap(num_iterations,create_binom_trinom_table)
+to_csv(a,"senior_male")
 
 
 
 
-#Bootstrapping
-filtered_games = data.frame(pso[pso$is_last_shot==1,c("uri")])
-colnames(filtered_games)=c("uri")
 
-k=data.frame()
-set.seed(42);
-iteration_seeds = sample(1000000,size=100000)
-for(i in 1:1000){
-  set.seed(iteration_seeds[i])
-  itertation_games = data.frame(filtered_games[sample(1:nrow(filtered_games),replace = T),])
-  colnames(itertation_games)=c("uri")
-  itertation_games$unique_game_id = 1:nrow(itertation_games)
-  
-  iteration_shootouts = myjoin(pso,itertation_games,join_type="")
-  iteration_k=create_binom_trinom_table(iteration_shootouts)
-  #iteration_k=create_pairwise_transitions_table(iteration_shootouts)
-  #iteration_k=create_binomial_transitions_table(iteration_shootouts)
-  iteration_k$iteration_number = i
-  k=rbind(k,iteration_k)
-  print(i)
-}
-k=k[,c(length(k),1:length(k-1))]
-k$iteration_number.1=NULL
-to_csv(k)
+
 
 
 #Testing bootstrapping code
