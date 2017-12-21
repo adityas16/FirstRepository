@@ -58,6 +58,7 @@ public class GameParser implements Parser {
 	private void extractCompetitionID(Document doc, Map<String, String> asMap) {
 		asMap.put("competition_ID","NA");
 		try{
+			//Picks competition ID from the Overview link on the top panel
 			asMap.put("competition_ID", StringUtils.extractResourceURI(doc.select("#navi > div.sitenavi > div > div > ul:nth-child(1) > li > a").get(0).attr("href")));
 		}
 		catch(Exception e){
