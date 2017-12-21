@@ -22,6 +22,8 @@ public class GameParser implements Parser {
 		Map<String, String> asMap = new LinkedHashMap<String, String>();
 		extractTitleInfo(doc.title(), asMap);
 		
+		extractCompetitionID(doc,asMap);
+		
 		String date = doc.select("#site > div.white > div.content > div > div.box > div > table:nth-child(1) > tbody > tr:nth-child(1) > th:nth-child(2)").get(0).childNode(0).toString();
 		extractDate(asMap, date);
 
@@ -52,7 +54,17 @@ public class GameParser implements Parser {
 			throw new InvalidParameterException("Computed and parsed scores donot match");
 		}
 	}
-
+	
+	private void extractCompetitionID(Document doc, Map<String, String> asMap) {
+		asMap.put("competition_ID","NA");
+		try{
+			asMap.put("competition_ID", StringUtils.extractResourceURI(doc.select("#navi > div.sitenavi > div > div > ul:nth-child(1) > li > a").get(0).attr("href")));
+		}
+		catch(Exception e){
+			
+		}
+	}
+	
 	private void extractHomeKeeper(Document doc, Map<String, String> asMap,int i) {
 		asMap.put("home_keeper","NA");
 		if(i>13){
@@ -108,8 +120,8 @@ public class GameParser implements Parser {
 	public static void main(String[] args) throws IOException {
 
 		GameParser mp = new GameParser();
-		mp.parse(DBCache.weltgameCache().get("cempionat-2011-belshina-bobruisk-neman-grodno-spiel"));
-		mp.parse(DBCache.weltgameCache().get("afrika-cup-1992-im-senegal-finale-elfenbeinkueste-ghana"));
+		System.out.println(mp.parse(DBCache.weltgameCache().get("cempionat-2011-belshina-bobruisk-neman-grodno-spiel")));
+		System.out.println(mp.parse(DBCache.weltgameCache().get("afrika-cup-1992-im-senegal-finale-elfenbeinkueste-ghana")));
 		//score and goals mismatch
 		mp.parse(DBCache.weltgameCache().get("a-grupa-2009-2010-minyor-pernik-botev-plovdiv"));
 		
