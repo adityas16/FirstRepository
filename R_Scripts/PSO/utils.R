@@ -71,8 +71,8 @@ pre_2003 = function(df){
 post_2003 = function(df){
   return(df[df$year>2003 | (df$year==2003 & df$month>7),])
 }
-to_csv = function(df,filename){
-  write.csv(df,paste0(TEMP_FOLDER , "/temp.csv"),row.names = F)
+to_csv = function(df,filename="temp.csv"){
+  write.csv(df,paste0(TEMP_FOLDER , filename),row.names = F)
 }
 my_xtable = function(df,digits = 3){
   precision = rep(0,ncol(df)+1)

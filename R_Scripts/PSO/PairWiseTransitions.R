@@ -166,7 +166,7 @@ num_iterations=1000
 load_all()
 pso = myjoin(pso,read_aer_games(),join_type="")
 a=run_bootstrap(num_iterations,create_binom_trinom_table)
-to_csv(a,"AER_1000")
+to_csv(a,"AER")
 
 #For senior men competitions only
 load_all()
@@ -176,8 +176,8 @@ shootouts$unique_game_id=shootouts$uri
 k=create_pairwise_transition_table(shootouts)
 to_csv(k[order(k$j,k$s * -1,k$c * -1),])
 
-a=run_bootstrap(num_iterations,create_binom_trinom_table)
-to_csv(a,"senior_male")
+b=run_bootstrap(num_iterations,create_binom_trinom_table)
+to_csv(b,"senior_male")
 
 
 
