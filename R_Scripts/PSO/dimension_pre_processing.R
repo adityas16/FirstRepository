@@ -177,12 +177,16 @@ read_post_2003_games = function(){
 }
 
 read_aer_games = function(){
-  aer_competition_map = read_aer_competition_map();
-  return(myjoin(games,aer_competition_map,c1="competition",c2="my_competition",join_type = ""))
+  return(filter_aer_games(games))
 }
 
 read_aer_competition_map = function(){
   return(read.csv(paste0(BASE_FOLDER,"/other_papers/AER/competition_mapping.csv")))
+}
+
+filter_aer_games = function(games){
+  aer_competition_map = read_aer_competition_map();
+  return(myjoin(games,aer_competition_map,c1="competition",c2="my_competition",join_type = ""))
 }
 
 read_senior_men_games = function(){
