@@ -74,6 +74,9 @@ post_2003 = function(df){
 to_csv = function(df,filename="temp"){
   write.csv(df,paste0(TEMP_FOLDER , filename,".csv"),row.names = F)
 }
+append_to_csv = function(df,filename="temp"){
+  write.table(df,paste0(TEMP_FOLDER , filename,".csv"),col.names = F,sep=",",row.names = F,append = T)
+}
 my_xtable = function(df,digits = 3){
   precision = rep(0,ncol(df)+1)
   for(i in 1:ncol(df)){
