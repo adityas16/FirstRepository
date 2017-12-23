@@ -134,13 +134,14 @@ create_binom_trinom_table = function(shootouts){
   return(x)
 }
 
-run_bootstrap = function(num_of_iterations,table_generator){
+run_bootstrap = function(num_of_iterations,table_generator,page_size=num_of_iterations+1){
   filtered_games = data.frame(pso[pso$is_last_shot==1,c("uri")])
   colnames(filtered_games)=c("uri")
   
   k=data.frame()
   set.seed(42);
   iteration_seeds = sample(1000000,size=100000)
+  entries_on_page = 0
   for(i in 1:num_of_iterations){
     set.seed(iteration_seeds[i])
     itertation_games = data.frame(filtered_games[sample(1:nrow(filtered_games),replace = T),])
@@ -152,21 +153,35 @@ run_bootstrap = function(num_of_iterations,table_generator){
     #iteration_k=create_pairwise_transitions_table(iteration_shootouts)
     #iteration_k=create_binomial_transitions_table(iteration_shootouts)
     iteration_k$iteration_number = i
+    iteration_k=iteration_k[,c(length(iteration_k),1:length(iteration_k-1))]
+    iteration_k$iteration_number.1=NULL
     k=rbind(k,iteration_k)
+    
+    #Append to temp at the end of each page
+    entries_on_page=entries_on_page+1
+    if(entries_on_page==page_size){
+      entries_on_page=0
+      #Create file for first page, but append for all others
+      if(i==entries_on_page){
+      to_csv(k)
+      }
+      else{
+        append_to_csv(k)
+      }
+      k=data.frame()
+    }
     print(i)
   }
-  k=k[,c(length(k),1:length(k-1))]
-  k$iteration_number.1=NULL
   return(k)
 }
 
-num_iterations=1000
+num_iterations=10
 #Setup the shootouts to consider
 #For AER competitions only
 load_all()
 pso = myjoin(pso,read_aer_games(),join_type="")
 a=run_bootstrap(num_iterations,create_binom_trinom_table)
-to_csv(a,"AER")
+to_csv(a,filename = "AER")
 
 #For senior men competitions only
 load_all()
