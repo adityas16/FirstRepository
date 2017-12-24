@@ -142,7 +142,7 @@ run_bootstrap = function(num_of_iterations,table_generator,page_size=num_of_iter
   set.seed(42);
   iteration_seeds = sample(1000000,size=100000)
   entries_on_page = 0
-  for(i in 58001:num_of_iterations){
+  for(i in 1:num_of_iterations){
     set.seed(iteration_seeds[i])
     itertation_games = data.frame(filtered_games[sample(1:nrow(filtered_games),replace = T),])
     colnames(itertation_games)=c("uri")
