@@ -43,3 +43,14 @@ run_homogeneity_tests = function(games){
   model = lm(formula = is_team_A_winner ~ competition, data = games)
   anova(model)
 }
+
+
+#Chi-square test on AER book
+
+#All competitions
+chisq.test(matrix(c(13,9, 5,10, 11,7, 12,8, 7,3, 9,7, 31,18, 20,12, 61,49, 91,92, 96,83, 251,96),ncol=2,byrow = T))
+
+#Without copa del rey
+chisq.test(matrix(c(13,9, 5,10, 11,7, 12,8, 7,3, 9,7, 31,18, 20,12, 61,49, 91,92, 96,83),ncol=2,byrow = T))
+
+
