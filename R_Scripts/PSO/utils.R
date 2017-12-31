@@ -25,11 +25,20 @@ myjoin <- function(df1, df2,c1="uri",c2="uri",join_type="LEFT OUTER" ,prepend_c1
 }
 
 z.2sample = function(x1,x2,n1,n2){
+  print("Proportions:")
+  print(n1)
+  print(n2)
+  print(x1/n1)
+  print(x2/n2)
   numerator = (x1/n1) - (x2/n2)
   p.common = (x1+x2) / (n1+n2)
   denominator = sqrt(p.common * (1-p.common) * (1/n1 + 1/n2))
   z.prop.ris = numerator / denominator
   return(2*pnorm(-abs(z.prop.ris)))
+}
+
+z.2vector = function(a,b){
+  return(z.2sample(sum(a),sum(b),length(a),length(b)))
 }
 
 z.2prop = function(p1,p2,n1,n2){
@@ -71,7 +80,7 @@ pre_2003 = function(df){
 post_2003 = function(df){
   return(df[df$year>2003 | (df$year==2003 & df$month>7),])
 }
-to_csv = function(df,filename="temp"){
+to_csv = function(df,filename="temp1"){
   write.csv(df,paste0(TEMP_FOLDER , filename,".csv"),row.names = F)
 }
 append_to_csv = function(df,filename="temp"){
