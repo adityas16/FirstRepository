@@ -1,9 +1,14 @@
 #Read data in Marcelo format
 known_shootouts=read.csv("C:\\Users\\aditya\\Dropbox\\penalties\\Data\\Combined\\Backup\\20171020\\Dataset1_combined.csv")
 
-#Drop CDL for now, it has already been analyzed in detail
-known_shootouts=known_shootouts[known_shootouts$competition != "Copa del Rey",]
 
+#Drop CDL for now, it has already been analyzed in detail
+#known_shootouts=known_shootouts[known_shootouts$competition != "Copa del Rey",]
+
+known_shootouts$decade = floor(known_shootouts$year/10)*10
+known_shootouts$is_home_winner = ifelse(known_shootouts$homeScore>known_shootouts$awayScore,1,0)
+known_shootouts$is_team_A_winner = ifelse((known_shootouts$is_home_winner & known_shootouts$homeShotFirst) | (!known_shootouts$is_home_winner & !known_shootouts$homeShotFirst),1,0)
+known_shootouts$is_team_A_winner
 known_shootouts$no_sequence = 1 - known_shootouts$has_sequence
 by_competition = ddply(known_shootouts,c("competition"),observed=sum(has_sequence),known_unobserved=sum(no_sequence),n=length(uri),percetage_observed = myprop(has_sequence),summarize)
 
@@ -53,4 +58,29 @@ chisq.test(matrix(c(13,9, 5,10, 11,7, 12,8, 7,3, 9,7, 31,18, 20,12, 61,49, 91,92
 #Without copa del rey
 chisq.test(matrix(c(13,9, 5,10, 11,7, 12,8, 7,3, 9,7, 31,18, 20,12, 61,49, 91,92, 96,83),ncol=2,byrow = T))
 
+
+#Selection of shootouts with sequence
+#by decade
+by_decade = ddply(aer_known_shootouts,c("decade"),observed=sum(has_sequence),known_unobserved=sum(no_sequence),n=length(uri),percetage_observed = myprop(has_sequence),summarize)
+
+
+#Analysis of first mover advantage in shootouts with sequence
+#Filter out shootouts with sequence
+aer_A=aer_known_shootouts[aer_known_shootouts$has_sequence==1,]
+aer_A = aer_A[!is.na(aer_A$is_team_A_winner),]
+known_shootouts_A=known_shootouts[known_shootouts$has_sequence==1,]
+known_shootouts_A = known_shootouts_A[!is.na(known_shootouts_A$is_team_A_winner),]
+
+
+#By decade, AER
+ddply(aer_A,c("decade"),team_A_win_proportion = myprop(is_team_A_winner),n=length(uri),summarize)
+
+#By round, AER
+ddply(aer_A,c("dist_from_final"),team_A_win_proportion = myprop(is_team_A_winner),n=length(uri),summarize)
+
+#By decade, all
+ddply(known_shootouts_A,c("decade"),team_A_win_proportion = myprop(is_team_A_winner),n=length(uri),summarize)
+
+#By round, all
+ddply(known_shootouts_A,c("dist_from_final"),team_A_win_proportion = myprop(is_team_A_winner),n=length(uri),summarize)
 
