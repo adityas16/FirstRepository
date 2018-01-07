@@ -1,6 +1,6 @@
 my_games = read.csv("/home/aditya/Research Data/weltfussball/extractedCSV/games.csv",stringsAsFactors=FALSE)
-ms_games = read.csv("/home/aditya/Research Data/other_papers/Reconciliation/ms.csv",stringsAsFactors=FALSE)
-aer_games = read.csv("/home/aditya/Research Data/other_papers/AER/aer.csv",stringsAsFactors=FALSE)
+ms_games = read.csv(paste0(BASE_FOLDER,"/other_papers/Reconciliation/ms.csv"),stringsAsFactors=FALSE)
+aer_games = read.csv(paste0(BASE_FOLDER,"/other_papers/AER/aer.csv"),stringsAsFactors=FALSE)
 aer_games = aer_games[aer_games$season<=2003,]
 all_scores = myjoin(my_games,final_scores)
 ms_games_joined = myjoin(ms_games,all_scores,c1="our_uri")
