@@ -60,6 +60,10 @@ ms_for_test$diff = (ms_for_test$home_score * ms_for_test$away_score) - (ms_for_t
 
 write.csv(ms_for_test,"/home/aditya/Research Data/other_papers/Reconciliation/ms_our_games.csv",row.names = F)
 
+#Find mismatch in first mover
+ms_our_games$first_mover_diff = ms_our_games$is_teamA_win - ms_our_games$our_uri_is_team_A_winner
+to_csv(ms_our_games[!is.na(ms_our_games$first_mover_diff) & ms_our_games$first_mover_diff !=0,])
+
 
 
 #testing of matching with aer data
