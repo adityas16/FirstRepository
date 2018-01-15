@@ -190,7 +190,7 @@ load_all()
 pso = myjoin(pso,read_senior_men_games(),join_type="")
 shootouts=pso
 shootouts$unique_game_id=shootouts$uri
-k=create_pairwise_transition_table(shootouts)
+k=create_binom_trinom_table(shootouts)
 to_csv(k[order(k$j,k$s * -1,k$c * -1),])
 
 b=run_bootstrap(num_iterations,create_binom_trinom_table)

@@ -89,6 +89,13 @@ public class FileUtils {
 		headers = data.get(0).keySet().toArray(headers);
 		writer.writeNext(headers);
 
+		writeRecords(data, writer);
+	}
+
+	private static void writeRecords(List<Map<String, String>> data, CSVWriter writer) throws IOException {
+		String[] headers = new String[1];
+		headers = data.get(0).keySet().toArray(headers);
+		
 		String[] fields = new String[headers.length];
 		for (Map<String, String> record : data) {
 			int i=0;
@@ -98,6 +105,9 @@ public class FileUtils {
 			writer.writeNext(fields);
 		}
 		writer.close();
-
+	}
+	public static void append(List<Map<String,String>> data,String fileName) throws IOException{
+		CSVWriter writer = new CSVWriter(new FileWriter(fileName,true));
+		writeRecords(data, writer);
 	}
 }

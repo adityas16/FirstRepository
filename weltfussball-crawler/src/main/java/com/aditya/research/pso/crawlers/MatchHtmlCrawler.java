@@ -20,11 +20,11 @@ import pso.SeasonParser;
 public class MatchHtmlCrawler implements Runnable{
 	SeasonParser seasonParser = new SeasonParser();
 	
-//	DBCache matchPageCache = DBCache.weltgameCache();
-//	ScheduleCrawler scheduleCrawler = new ScheduleCrawler();
+	DBCache matchPageCache = DBCache.weltgameCache();
+	ScheduleCrawler scheduleCrawler = new ScheduleCrawler();
 	
-	DBCache matchPageCache = DBCache.weltpsoCache();
-	SchedulePenaltyParser scheduleCrawler = new SchedulePenaltyParser();
+//	DBCache matchPageCache = DBCache.weltpsoCache();
+//	SchedulePenaltyParser scheduleCrawler = new SchedulePenaltyParser();
 //	FileSystemCache matchPageCache = new FileSystemCach																		e("/home/aditya/Research Data/weltfussball/friendlies/", Constants.worldfootballURL + Constants.report + "/");
 	
 	public void crawlSeasons(String path) throws IOException{
@@ -93,7 +93,7 @@ public class MatchHtmlCrawler implements Runnable{
 //		mhc.crawlCompetition("eng-fa-community-shield-2017");
 //		mhc.crawlCompetition(args[0]);
 //		mhc.crawlCompetitions();
-		MatchHtmlCrawler.launchCrawler(4);
+		MatchHtmlCrawler.launchCrawler(8);
 	}
 
 }

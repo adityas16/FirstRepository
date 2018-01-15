@@ -127,7 +127,7 @@ public class MatchGoalParser implements Parser{
 	
 	public static void main(String[] args) throws IOException {
 		MatchGoalParser mep = new MatchGoalParser();
-		System.out.println(mep.parseURI("cempionat-2011-belshina-bobruisk-dinamo-brest"));
+		System.out.println(mep.parseURI("primera-division-2012-2013-rayo-vallecano-celta-vigo"));
 		//own goal
 		System.out.println(mep.parseURI("premier-league-2015-2016-manchester-united-tottenham-hotspur"));
 		System.out.println(mep.parseURI("wm-2010-in-suedafrika-gruppe-a-uruguay-frankreich"));

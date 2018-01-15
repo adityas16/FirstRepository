@@ -2,10 +2,10 @@ package pso;
 
 public class Constants {
 	//Linux
-	public static String BASE_FOLDER = "/home/aditya/Dropbox/Research/Link to Research Data/";
+//	public static String BASE_FOLDER = "/home/aditya/Dropbox/Research/Link to Research Data/";
 	
 	//Windows
-//	public static String BASE_FOLDER = "C:\\Users\\aditya\\Dropbox\\Research\\Link to Research Data\\";
+	public static String BASE_FOLDER = "C:\\Users\\aditya\\Dropbox\\Research\\Link to Research Data\\";
 	
 	public static String weltFolder = BASE_FOLDER + "weltfussball/";
 	public static String combined = BASE_FOLDER + "combined/";

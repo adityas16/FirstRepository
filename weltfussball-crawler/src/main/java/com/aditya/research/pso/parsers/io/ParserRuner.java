@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -106,7 +106,6 @@ public class ParserRuner {
 		
 		boolean headersWritten = false;
 		while(iter.hasNext()){
-			System.out.println(count++);
 			List<Map<String, String>> records = new ArrayList<Map<String,String>>();
 			DocumentWIthIdentifier documentWIthIdentifier = iter.next();
 			try{
@@ -135,6 +134,7 @@ public class ParserRuner {
 				writer.writeNext(fields);
 			}
 			writer.flush();
+			System.out.println(documentWIthIdentifier.getIdentifier() + count++);
 		}
 		
 		writer.close();
@@ -145,8 +145,10 @@ public class ParserRuner {
 		List<String> URIList = Files.readAllLines(Paths.get(filename));
 		List<Map<String, String>> records = new ArrayList<Map<String,String>>();
 		
-		for (String URI : new HashSet<String>(URIList)) {
+		int entriesOnPage=0;
+		for (String URI : new LinkedHashSet<String>(URIList)) {
 			count ++;
+			entriesOnPage++;
 			Map<String, String> map = new LinkedHashMap<String, String>();
 			map.put("uri", URI);
 			try{
@@ -156,18 +158,30 @@ public class ParserRuner {
 				continue;
 			}
 			records.add(map);
+			if(entriesOnPage==1000) {
+				//First page
+				if(count==entriesOnPage) {
+					FileUtils.write(records, outputFile);
+				}
+				//Subsequent pages
+				else {
+					FileUtils.append(records, outputFile);
+				}
+				entriesOnPage = 0;
+				records = new ArrayList<Map<String,String>>();
+			}
+			
 //			System.out.println(URI + "," + count);
 		}
-		FileUtils.write(records, outputFile);
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String extractFor = "goal";
+		String extractFor = "pso";
 		
 		ParserRuner pr = new ParserRuner(extractFor);
 //		ParserRuner pr = ParserRuner.hockeyRefParserRuner(extractFor);
 		pr.parseAll();
-//		pr.parseFromFile(Constants.weltFolder + "extractedCSV/games_with_incidents.csv");
+//		pr.parseFromFile(Constants.weltFolder + "games_diff.csv");
 //		pr.parseFromFile("/home/aditya/epl_players_sorted");
 	}
 }

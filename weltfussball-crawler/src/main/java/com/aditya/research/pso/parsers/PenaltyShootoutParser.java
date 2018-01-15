@@ -29,6 +29,7 @@ public class PenaltyShootoutParser implements Parser{
 	private static String stage;
 	private static int homeScore=0;
 	private static int awayScore=0;
+	private static String shotSequence="";
 	
 //	private static Set<String> invalidGames = DataValiditor.findInvalidGames();
 	
@@ -45,6 +46,7 @@ public class PenaltyShootoutParser implements Parser{
 		return records;
 	}
 	public List<Shot> parseForShots(Document doc) {
+		shotSequence="";
 		kickNumber = 1;
 		homeScore = awayScore =0;
 		gameName = doc.title().trim();
@@ -80,6 +82,7 @@ public class PenaltyShootoutParser implements Parser{
 			}
 			
 		}
+		System.out.println(shotSequence);
 		return shots;
 	}
 	private static String getCompetitionName(String text){
@@ -140,6 +143,15 @@ public class PenaltyShootoutParser implements Parser{
 		s.gameName = gameName;
 		s.year = year;
 		s.stage = stage;
+		
+		//Testing for alternate sequences
+		if(hellElement.attributes().get("style").equals("")){
+			shotSequence = shotSequence.concat("h");
+		}
+		else {
+			shotSequence = shotSequence.concat("a");
+		}
+		
 		return s;
 	}
 	

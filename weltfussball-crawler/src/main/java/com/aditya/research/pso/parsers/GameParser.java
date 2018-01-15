@@ -121,7 +121,7 @@ public class GameParser implements Parser {
 	public static void main(String[] args) throws IOException {
 
 		GameParser mp = new GameParser();
-		System.out.println(mp.parse(DBCache.weltgameCache().get("cempionat-2011-belshina-bobruisk-neman-grodno-spiel")));
+		System.out.println(mp.parse(DBCache.weltgameCache().get("primera-division-2012-2013-rayo-vallecano-atletico-madrid")));
 		System.out.println(mp.parse(DBCache.weltgameCache().get("afrika-cup-1992-im-senegal-finale-elfenbeinkueste-ghana")));
 		//score and goals mismatch
 		mp.parse(DBCache.weltgameCache().get("a-grupa-2009-2010-minyor-pernik-botev-plovdiv"));
