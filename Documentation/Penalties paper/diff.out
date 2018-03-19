@@ -1,0 +1,18 @@
+\BOOKMARK [1][-]{section.1}{Introduction }{}% 1
+\BOOKMARK [1][-]{section.2}{Data and Shootout level analysis}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Data collection}{section.2}% 3
+\BOOKMARK [1][-]{section.3}{Shot-by-shot empirical analysis}{}% 4
+\BOOKMARK [2][-]{subsection.3.1}{First-mover advantage by shooting round}{section.3}% 5
+\BOOKMARK [2][-]{subsection.3.2}{Shot importance as a mediating factor of the first-mover advantage}{section.3}% 6
+\BOOKMARK [1][-]{section.4}{Evaluating alternative shooting sequences}{}% 7
+\BOOKMARK [2][-]{subsection.4.1}{Modeling round transitions}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.2}{A network model to analyze outcomes of penalty shootouts}{section.4}% 9
+\BOOKMARK [2][-]{subsection.4.3}{Estimating transition probabilities}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.4}{Statistical tests to compare trinomial transitions}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.5}{Calculation of winning probabilities for alternative shot sequences}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.6}{Hypothesis testing}{section.4}% 13
+\BOOKMARK [1][-]{section.5}{Conclusions}{}% 14
+\BOOKMARK [1][-]{appendix.A}{Estimation of scoring probabilities using state transitions}{}% 15
+\BOOKMARK [1][-]{appendix.B}{Estimation of transition probabilities for the Trinomial Network}{}% 16
+\BOOKMARK [1][-]{appendix.C}{Additional specifications}{}% 17
+\BOOKMARK [2][-]{subsection.C.1}{Expanded set of competitions}{appendix.C}% 18
