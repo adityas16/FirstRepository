@@ -102,7 +102,7 @@ read_in_play_penalties = function(){
     return(inplay_goals[inplay_goals$isPenalty == "true",])
 }
 read_odds <- function (){
-  odds = read.csv(paste(DATA_FOLDER,"joined/bet_ex_odds.csv",sep="/"))
+  odds = read.csv(paste(WELT_FOLDER,"joined/bet_ex_odds.csv",sep="/"))
   odds = odds[!is.na(odds$odds_h) & !is.na(odds$odds_a) & !is.na(odds$odds_t),]
   odds$p_h = (1/odds$odds_h) / (1/odds$odds_h + 1/odds$odds_a + 1/odds$odds_t)
   odds$p_a = (1/odds$odds_a) / (1/odds$odds_h + 1/odds$odds_a + 1/odds$odds_t)
