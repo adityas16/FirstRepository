@@ -1,3 +1,4 @@
+#Web API code for HTTP request/response processing
 from flask import Flask
 from flask import Flask, render_template
 from flask import request, redirect
@@ -27,6 +28,7 @@ def index():
 @app.route('/model1', methods = ['POST'])
 def postmodel1():
 	input_map = request.form.to_dict()
+	print(input_map)
 	#Convert all input values to float from string
 	input_map = {k : float(v) for k,v in input_map.items()}
 	resp = jsonify(model1(input_map))

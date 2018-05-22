@@ -1,0 +1,30 @@
+1. Setting up python and pip
+python
+Download link: https://www.python.org/downloads/
+
+pip
+Run the script in the installations folder (requires python)
+python ./installations/get_pip.py
+
+2. Installing Modules
+flask
+Flask-BasicAuth
+
+To install a module, run : 
+pip install <module-name>
+
+
+3.Deployment
+To run the server,
+python controller.py
+
+To access the app in a browser, use this link
+http://localhost:5000 
+
+
+4.Useful resources:
+Setting up a web server using flask:
+http://opentechschool.github.io/python-flask/
+
+HTML/Javascript
+https://www.w3schools.com/html/default.asp

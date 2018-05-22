@@ -33,23 +33,32 @@
 		
 		<TABLE >
 			<TR>
-				<TD>N1</TD>
+				<TD>Arrival Rate</TD>
 				<TD>
 					<INPUT TYPE="TEXT" NAME="n1" value = 3>
 				</TD>
 			</TR>
 			<TR>
 				<TD>N2</TD>
-				<TD><INPUT TYPE="TEXT" NAME="n2" value = 1.1></TD>
+				<TD>
+					<INPUT TYPE="TEXT" NAME="n2" value = 1.1>
+				</TD>
+			</TR>
+						<TR>
+				<TD>N3</TD>
+				<TD><input type="range" NAME="n3" min="1" max="10"</TD>
+				<output for="n3" onforminput="value = n3.valueAsNumber;"></output>
 			</TR>
 		</TABLE>
 
 	</form>
 </body>
 
+
 <script>
 	function runModel() {
 		var formElement = document.querySelector("form");
+		//clear old output before processing new input
 		document.getElementById("out1").innerHTML = "";
 		document.getElementById("out2").innerHTML = "";
 		var request = new XMLHttpRequest();
