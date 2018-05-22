@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Model 1</title>
+  </head>
+<head>
+
+<h2>Model 1</h2>
+	
+	<style>
+	table {
+		font-family: arial, sans-serif;
+		border-collapse: collapse;
+		width: 100%;
+	}
+
+	td, th {
+		border: 1px solid #dddddd;
+		text-align: left;
+		padding: 8px;
+	}
+
+	tr:nth-child(even) {
+		background-color: #dddddd;
+	}
+</style>
+</head>
+
+<h3>Input</h3>
+
+<body>
+	<form action="model1" method="post">
+		
+		<TABLE >
+			<TR>
+				<TD>N1</TD>
+				<TD>
+					<INPUT TYPE="TEXT" NAME="n1" value = 3>
+				</TD>
+			</TR>
+			<TR>
+				<TD>N2</TD>
+				<TD><INPUT TYPE="TEXT" NAME="n2" value = 1.1></TD>
+			</TR>
+		</TABLE>
+
+	</form>
+</body>
+
+<script>
+	function runModel() {
+		var formElement = document.querySelector("form");
+		document.getElementById("out1").innerHTML = "";
+		document.getElementById("out2").innerHTML = "";
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var json = JSON.parse(this.responseText);
+				document.getElementById("out1").innerHTML = json.out1;
+				document.getElementById("out2").innerHTML = json.out2;
+			}
+		};
+		request.open("POST", "model1");
+		request.send(new FormData(formElement));
+
+	}
+</script>
+
+<br></br>
+
+<input id="run" type="button" value="Run" onclick="runModel();" />
+
+<br></br>
+
+<h3>Output</h3>
+
+<table>
+	<TR>
+		<TD>Out1 (N1 * 2)</TD>
+		<TD>
+			<output id="out1" "></output>
+		</TD>
+	</TR>
+	<TR>
+		<TD>Out2 (N1 + N2)</TD>
+		<td>
+			<output id="out2" "></output>
+		</td>
+	</TR>
+</table>
+
+</html>
