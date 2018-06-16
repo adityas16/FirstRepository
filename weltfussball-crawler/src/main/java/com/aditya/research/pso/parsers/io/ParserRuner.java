@@ -16,6 +16,7 @@ import com.aditya.research.pso.etl.StringUtils;
 import com.aditya.research.pso.parsers.GameParser;
 import com.aditya.research.pso.parsers.MatchGoalParser;
 import com.aditya.research.pso.parsers.MatchIncidentParser;
+import com.aditya.research.pso.parsers.MatchRedCardParser;
 import com.aditya.research.pso.parsers.Parser;
 import com.aditya.research.pso.parsers.PenaltyShootoutParser;
 import com.aditya.research.pso.parsers.PlayerParser;
@@ -89,6 +90,11 @@ public class ParserRuner {
 			pageCache = DBCache.transfermrktKeeperPenaltyStatsCache();
 			parser = PlayerPenaltyStatsParser.keeperParser();
 			outputCSV = "keeperPenaltyStats.csv";
+		}
+		else if(extractFor.equals("redCards")){
+			pageCache = DBCache.weltgameCache();
+			parser = new MatchRedCardParser();
+			outputCSV = "red_cards.csv";
 		}
 		outputFile =  Constants.extractedCSV + outputCSV;
 	}
@@ -176,7 +182,7 @@ public class ParserRuner {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String extractFor = "pso";
+		String extractFor = "redCards";
 		
 		ParserRuner pr = new ParserRuner(extractFor);
 //		ParserRuner pr = ParserRuner.hockeyRefParserRuner(extractFor);
