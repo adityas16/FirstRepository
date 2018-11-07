@@ -2,11 +2,12 @@ package pso;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +85,7 @@ public class FileUtils {
 		writer.close();
 	}
 	public static void write(List<Map<String,String>> data,String fileName) throws IOException{
-		CSVWriter writer = new CSVWriter(new FileWriter(fileName));
+		CSVWriter writer = new CSVWriter(new OutputStreamWriter (new FileOutputStream(fileName), "UTF-8"));
 		String[] headers = new String[1];
 		headers = data.get(0).keySet().toArray(headers);
 		writer.writeNext(headers);
@@ -107,7 +108,7 @@ public class FileUtils {
 		writer.close();
 	}
 	public static void append(List<Map<String,String>> data,String fileName) throws IOException{
-		CSVWriter writer = new CSVWriter(new FileWriter(fileName,true));
+		CSVWriter writer = new CSVWriter(new OutputStreamWriter (new FileOutputStream(fileName,true), "UTF-8"));
 		writeRecords(data, writer);
 	}
 }

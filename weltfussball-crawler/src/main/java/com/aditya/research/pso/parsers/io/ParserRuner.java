@@ -1,7 +1,9 @@
 package com.aditya.research.pso.parsers.io;
 
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import pso.Constants;
 import pso.DBCache;
 import pso.FileUtils;
+import pso.SchedulePenaltyParser;
 
 public class ParserRuner {
 	
@@ -96,6 +99,11 @@ public class ParserRuner {
 			parser = new MatchRedCardParser();
 			outputCSV = "red_cards.csv";
 		}
+		else if(extractFor.equals("allPsoGames")){
+			pageCache = DBCache.weltseasonCache();
+			parser = new SchedulePenaltyParser();
+			outputCSV = "all_pso_games.csv";
+		}
 		outputFile =  Constants.extractedCSV + outputCSV;
 	}
 	
@@ -105,7 +113,7 @@ public class ParserRuner {
 	}
 
 	private void parseStream(Iterator<DocumentWIthIdentifier> iter) throws IOException {
-		CSVWriter writer = new CSVWriter(new FileWriter(outputFile));
+		CSVWriter writer = new CSVWriter(new OutputStreamWriter (new FileOutputStream(outputFile), "UTF-8"));
 		String[] headers = new String[1];
 		
 		int errorCount=0;
@@ -182,7 +190,7 @@ public class ParserRuner {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String extractFor = "redCards";
+		String extractFor = "allPsoGames";
 		
 		ParserRuner pr = new ParserRuner(extractFor);
 //		ParserRuner pr = ParserRuner.hockeyRefParserRuner(extractFor);

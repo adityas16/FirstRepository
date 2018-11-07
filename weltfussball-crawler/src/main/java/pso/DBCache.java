@@ -1,6 +1,8 @@
 package pso;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -32,7 +34,7 @@ public class DBCache {
 
 		// create our mysql database connection
 		try {
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/" + schema, "root", "root");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/" + schema + "?useUnicode=yes&characterEncoding=UTF-8", "root", "root");
 //			conn.setAutoCommit(false);
 			read = conn.prepareStatement("Select * from " + table + " where uri= ?");
 			write = conn.prepareStatement("insert into " + table + " (uri,raw_html) VALUES (?,?)");
@@ -68,7 +70,7 @@ public class DBCache {
 				throw new IOException("resource not found");
 			}
 			write.setString(1, uri);
-			write.setBytes(2, doc.outerHtml().getBytes());
+			write.setBytes(2, doc.outerHtml().getBytes("UTF-8"));
 
 			try{
 			write.execute();
@@ -84,8 +86,8 @@ public class DBCache {
 		}
 	}
 
-	private DocumentWIthIdentifier readDocument(ResultSet rs) throws SQLException {
-		Document doc = Jsoup.parse(new String(rs.getBlob("raw_html").getBytes(1L, (int)rs.getBlob("raw_html").length()))); 
+	private DocumentWIthIdentifier readDocument(ResultSet rs) throws SQLException, UnsupportedEncodingException {
+		Document doc = Jsoup.parse(new String(rs.getBlob("raw_html").getBytes(1L, (int)rs.getBlob("raw_html").length()),"UTF-8")); 
 		return new DocumentWIthIdentifier(doc, rs.getString("uri"));
 	}
 
