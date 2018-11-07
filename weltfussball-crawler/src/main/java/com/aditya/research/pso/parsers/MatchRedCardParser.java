@@ -2,7 +2,7 @@ package com.aditya.research.pso.parsers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -30,7 +30,7 @@ public class MatchRedCardParser implements Parser{
 		redCardElements.addAll(doc.select("img[src$=https://s.hs-data.com/bilder/shared/karten/2.gif]"));
 		
 		for (Element element : redCardElements) {
-			Map<String,String> event = new HashMap<String, String>();
+			Map<String,String> event = new LinkedHashMap<String, String>();
 			event.put("is_home", (element.parents().get(4).siblingIndex() == 1) + "");
 			event.put("time", "NA");
 			Matcher m = Pattern.compile("title=\"at (\\d+)\"").matcher(element.parent().toString());
@@ -50,10 +50,16 @@ public class MatchRedCardParser implements Parser{
 	public static void main(String[] args) throws IOException {
 		MatchRedCardParser mep = new MatchRedCardParser();
 		
+		//Time in different place
+		System.out.println(mep.parseURI("serie-a-1995-1996-ac-milan-ssc-napoli"));
+		
 		System.out.println(mep.parseURI("premier-league-2017-2018-arsenal-fc-southampton-fc"));
 		//one red, one second yellow
 		System.out.println(mep.parseURI("premier-league-2017-2018-chelsea-fc-burnley-fc"));
 		System.out.println(mep.parseURI("premier-league-2017-2018-newcastle-united-tottenham-hotspur"));
+		
+	
+
 //		mep.parseURI("europa-league-1961-1962-1-runde-hibernian-fc-os-belenenses");
 	}
 	

@@ -85,12 +85,12 @@ public class MatchIncidentParser implements Parser{
 		
 		mep.parseURI("premier-league-2007-2008-wigan-athletic-fulham-fc");
 		//error
-		System.out.println(mep.parseURI("a-junioren-bundesliga-west-2004-2005-rot-weiss-essen-fortuna-duesseldorf"));
+//		System.out.println(mep.parseURI("a-junioren-bundesliga-west-2004-2005-rot-weiss-essen-fortuna-duesseldorf"));
 
 		//2 penalties
 		System.out.println(mep.parseURI("premier-league-2015-2016-west-bromwich-albion-watford-fc"));
 
 		System.out.println(mep.parseURI("premier-league-2016-2017-arsenal-fc-liverpool-fc"));
-		mep.parseURI("europa-league-1961-1962-1-runde-hibernian-fc-os-belenenses");
+//		mep.parseURI("europa-league-1961-1962-1-runde-hibernian-fc-os-belenenses");
 	}
 }
