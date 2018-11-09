@@ -29,9 +29,9 @@ public class MatchHtmlCrawler implements Runnable{
 	
 	public void crawlSeasons(String path) throws IOException{
 		
-		//		String path = args.length==0?Constants.baseFolder + "season_pages":args[0];
+		String inFile = path.length()==0?Constants.weltFolder + "season_pages.csv":path;
 
-		List<String> competitionURIsList = Files.readAllLines(Paths.get(path));
+		List<String> competitionURIsList = Files.readAllLines(Paths.get(inFile));
 		
 		for (String seasonURI : Utils.shuffle(competitionURIsList)) {
 			crawlSeason(seasonURI);
@@ -93,7 +93,7 @@ public class MatchHtmlCrawler implements Runnable{
 //		mhc.crawlCompetition("eng-fa-community-shield-2017");
 //		mhc.crawlCompetition(args[0]);
 //		mhc.crawlCompetitions();
-		MatchHtmlCrawler.launchCrawler(8);
+		MatchHtmlCrawler.launchCrawler(4);
 	}
 
 }
