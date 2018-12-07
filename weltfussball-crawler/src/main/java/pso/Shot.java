@@ -14,7 +14,7 @@ public class Shot{
 	public int year;
 	public String stage;
 	public String uri;
-	
+	public boolean isHomeShot;
 	public String striker="NA";
 
 	public int getAScore(){
@@ -61,6 +61,7 @@ public class Shot{
 		asMap.put("stage" ,stage);
 		asMap.put("shooter",striker);
 		asMap.put("uri",uri);
+		asMap.put("isHomeShot",asInt(isHomeShot) + "");
 		return asMap;
 	}
 

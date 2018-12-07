@@ -151,12 +151,18 @@ public class PenaltyShootoutParser implements Parser{
 		else {
 			shotSequence = shotSequence.concat("a");
 		}
-		
+		s.isHomeShot = false;
+		if(hellElement.attributes().get("style").equals("")){
+			s.isHomeShot = true;
+		}
 		return s;
 	}
 	
 	public static void main(String[] args) throws IOException {
 		System.out.println(new PenaltyShootoutParser().parse(
 				DBCache.weltpsoCache().get("u21-h-em-2015-tschechien-finale-schweden-portugal")));
+		//ABBA sequence
+		System.out.println(new PenaltyShootoutParser().parse(
+				DBCache.weltpsoCache().get("fa-community-shield-2017-finale-chelsea-fc-arsenal-fc")));
 	}
 }
