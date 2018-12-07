@@ -10,6 +10,11 @@ public class Constants {
 		return kickSequence;
 	}
 	
+	public static boolean[] ABBA(){
+		boolean[] kickSequence = {true,true,false,false,true,true,false,false,true,true,false};
+		return kickSequence;
+	}
+	
 	public static boolean[] iceHockeyKickSequence(){
 		boolean[] kickSequence = {true,true,false,true,false,true,false};
 		return kickSequence;
