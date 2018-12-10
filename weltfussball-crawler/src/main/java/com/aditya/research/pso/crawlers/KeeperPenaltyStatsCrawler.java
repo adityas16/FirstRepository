@@ -22,8 +22,10 @@ public class KeeperPenaltyStatsCrawler {
 		Collections.shuffle(playerURIsList);
 		
 		for (String player_uri : playerURIsList) {
-			String name = player_uri.split(",")[0];
-			String id = player_uri.split(",")[1];
+			player_uri = player_uri.replace("\"", "");
+			player_uri = player_uri.split(",")[1];
+			String name = player_uri.split("_")[0];
+			String id = player_uri.split("_")[1];
 			String dbURI = player_uri;
 			
 			if(id.equals("") || name.equals("")){
@@ -51,6 +53,7 @@ public class KeeperPenaltyStatsCrawler {
 
 	public static void main(String[] args) throws IOException {
 		KeeperPenaltyStatsCrawler pc = new KeeperPenaltyStatsCrawler();
-		pc.crawlPlayersInFile(Constants.transermrktFolder + "keeperPenaltyStatsPages");
+//		pc.crawlPlayersInFile(Constants.transermrktFolder + "keeperPenaltyStatsPages");
+		pc.crawlPlayersInFile(Constants.transermrktFolder + "/extractedCSV/welt_transfermkt_mapping_keepers.csv");
 	}
 }
