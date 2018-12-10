@@ -53,7 +53,6 @@ public class KeeperPenaltyStatsCrawler {
 
 	public static void main(String[] args) throws IOException {
 		KeeperPenaltyStatsCrawler pc = new KeeperPenaltyStatsCrawler();
-//		pc.crawlPlayersInFile(Constants.transermrktFolder + "keeperPenaltyStatsPages");
 		pc.crawlPlayersInFile(Constants.transermrktFolder + "/extractedCSV/welt_transfermkt_mapping_keepers.csv");
 	}
 }
