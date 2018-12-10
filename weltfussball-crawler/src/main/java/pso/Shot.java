@@ -70,11 +70,10 @@ public class Shot{
 	}
 
 	public boolean isAShot(){
-		return kickNumber % 2 == 1;
-	}
+		return (isHomeShot() && homeShotFirst) || (!isHomeShot() && !homeShotFirst);	}
 	
 	public boolean isHomeShot(){
-		return isAShot() && homeShotFirst || !isAShot() && !homeShotFirst;
+		return isHomeShot;
 	}
 
 	public State previousState(){
@@ -105,5 +104,8 @@ public class Shot{
 	}
 	public State asState(){
 		return new State(kicksByA(),kicksByB(), getAScore(),getBScore());
+	}
+	public State asState(int kicksByA,int kicksByB){
+		return new State(kicksByA,kicksByB, getAScore(),getBScore());
 	}
 }
