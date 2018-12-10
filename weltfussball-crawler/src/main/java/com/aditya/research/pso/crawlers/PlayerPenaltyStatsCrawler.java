@@ -22,10 +22,20 @@ public class PlayerPenaltyStatsCrawler {
 		Collections.shuffle(playerURIsList);
 		
 		for (String player_uri : playerURIsList) {
-			String name = player_uri.split(",")[0];
-			String id = player_uri.split(",")[1];
+			player_uri = player_uri.replace("\"", "");
+			
+			player_uri = player_uri.split(",")[1];
+			
+			if(!player_uri.contains("_")){
+				System.err.println(player_uri);
+				continue;
+			}
+			String name = player_uri.split("_")[0];
+			String id = player_uri.split("_")[1];
 			String dbURI = name + "_" + id;
+			
 			if(id.equals("") || name.equals("")){
+				System.err.println(player_uri);
 				continue;
 			}
 			String webURI = name + "/elfmetertore/spieler/" + id;
@@ -50,6 +60,6 @@ public class PlayerPenaltyStatsCrawler {
 
 	public static void main(String[] args) throws IOException {
 		PlayerPenaltyStatsCrawler pc = new PlayerPenaltyStatsCrawler();
-		pc.crawlPlayersInFile(Constants.transermrktFolder + "playerPenaltyStatsPages_all");
+		pc.crawlPlayersInFile(Constants.transermrktFolder + "/extractedCSV/welt_transfermkt_mapping_shooters.csv");
 	}
 }
