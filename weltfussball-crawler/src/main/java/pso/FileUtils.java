@@ -56,7 +56,9 @@ public class FileUtils {
 			s.year = Integer.parseInt(record.get("year"));
 			s.competition = record.get("competition");
 			s.uri = record.get("uri");
+			if(record.isMapped("isHomeShot")) {
 			s.isHomeShot = Integer.parseInt(record.get("isHomeShot"))==1;
+			}
 			currentGameShots.add(s);
 		}
 		shotsByGame.remove("");
