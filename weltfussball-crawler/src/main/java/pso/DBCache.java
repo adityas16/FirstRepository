@@ -34,7 +34,7 @@ public class DBCache {
 
 		// create our mysql database connection
 		try {
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/" + schema + "?useUnicode=yes&characterEncoding=UTF-8", "root", "root");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + Constants.MYSQL_SERVER +"/" + schema + "?useUnicode=yes&characterEncoding=UTF-8", "root", "root");
 //			conn.setAutoCommit(false);
 			read = conn.prepareStatement("Select * from " + table + " where uri= ?");
 			write = conn.prepareStatement("insert into " + table + " (uri,raw_html) VALUES (?,?)");

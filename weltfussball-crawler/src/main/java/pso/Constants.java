@@ -5,6 +5,7 @@ public class Constants {
 //	public static String BASE_FOLDER = "/home/aditya/Dropbox/Research/Link to Research Data/";
 	
 	//Windows
+	public static String MYSQL_SERVER="107.178.212.44";
 	public static String BASE_FOLDER = "C:\\Users\\adity\\Dropbox\\Research\\Link to Research Data\\";
 	
 	public static String weltFolder = BASE_FOLDER + "weltfussball/";
