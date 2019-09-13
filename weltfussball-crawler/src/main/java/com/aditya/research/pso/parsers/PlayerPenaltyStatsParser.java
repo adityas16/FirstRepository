@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -14,14 +16,14 @@ import com.aditya.research.pso.etl.StringUtils;
 import pso.DBCache;
 
 public class PlayerPenaltyStatsParser  implements Parser{
-	String success;
-	String failure;
+	String successLabel;
+	String failureLabel;
 	
 	
 	private PlayerPenaltyStatsParser(String success, String failure) {
 		super();
-		this.success = success;
-		this.failure = failure;
+		this.successLabel = success;
+		this.failureLabel = failure;
 	}
 	public static PlayerPenaltyStatsParser keeperParser(){
 		return new PlayerPenaltyStatsParser("n_saved_penalties", "n_conceeded_penalties");
@@ -31,8 +33,8 @@ public class PlayerPenaltyStatsParser  implements Parser{
 	}
 	public List<Map<String, String>> parse(Document doc) {
 		Map<String, String> asMap = new LinkedHashMap<String, String>();
-		asMap.put(success, "NA");
-		asMap.put(failure, "NA");
+		asMap.put(successLabel, "NA");
+		asMap.put(failureLabel, "NA");
 		
 		extractPenaltyHeaders(doc, asMap);
 		extractMarketValue(doc,asMap);
@@ -41,11 +43,17 @@ public class PlayerPenaltyStatsParser  implements Parser{
 	}
 	private void extractPenaltyHeaders(Document doc, Map<String, String> asMap) {
 		try{
-		Elements scoredPenaltyHeader = doc.select("#main > div:nth-child(13) > div.large-8.columns > div:nth-child(1) > div.table-header > a");
-		asMap.put(success, StringUtils.extractInt(scoredPenaltyHeader.get(0).childNode(0).toString()) + "");
-		Elements missedPenaltyHeader = doc.select("#main > div:nth-child(13) > div.large-8.columns > div:nth-child(2) > div.table-header > a");
-		asMap.put(failure, StringUtils.extractInt(missedPenaltyHeader.get(0).childNode(0).toString()) + "");
+		String successes = "";
+		Matcher m = Pattern.compile(" - total (\\d+)").matcher(doc.outerHtml());
+		if(m.find()) {
+			successes = m.group(1);
 		}
+		if(m.find()) {
+			//Put both or neither
+			asMap.put(successLabel, successes);
+			asMap.put(failureLabel, m.group(1));
+		}
+				}
 		catch(Exception e){
 			System.out.println("penalty header not found");
 		}
@@ -88,7 +96,7 @@ public class PlayerPenaltyStatsParser  implements Parser{
 
 			PlayerPenaltyStatsParser ppp = shooterParser();
 			System.out.println(ppp.parse(pageCache.get("lionel-messi/elfmetertore/spieler/28003")));
-			System.out.println(ppp.parse(pageCache.get("diederik-boer/elfmetertore/spieler/7288")));
+			System.out.println(ppp.parse(pageCache.get("diederik-boer/elfmeterstatistik/spieler/7288")));
 			
 
 	}
