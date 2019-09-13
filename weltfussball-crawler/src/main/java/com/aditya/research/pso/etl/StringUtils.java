@@ -1,11 +1,17 @@
 package com.aditya.research.pso.etl;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+
+import pso.FileUtils;
 
 public class StringUtils {
 	public static int extractInt(String text){
@@ -43,5 +49,12 @@ public class StringUtils {
 	public static int extractMonthNumberFromString(String month){
 		Date date = new Date("1 " + month + "2010");
 		return date.getMonth()+1;
+	}
+	
+	public static void main(String[] args) throws IOException {
+		List<String> URIList = Files.readAllLines(Paths.get("C:\\Users\\adity\\Desktop\\temp.csv"));
+		for (String URI : URIList) {
+			System.out.println(StringUtils.toSimpleCharset(URI));
+		}
 	}
 }
