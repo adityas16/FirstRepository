@@ -44,7 +44,7 @@ public class SchedulePenaltyParser implements Parser {
 
 	private List<Map<String, String>> parseAllShootouts(Document doc) {
 		List<Map<String, String>> records  = new ArrayList<Map<String,String>>();
-		String competitionName="",latestDay="",latestMonth="",latestYear="";
+		String competitionName="NA",latestDay="NA",latestMonth="NA",latestYear="NA";
 		Matcher m = Pattern.compile(" » (.*) \\d{4}").matcher(doc.select("#navi > div.breadcrumb > h1").get(0).outerHtml());
 		if(m.find()) {
 			competitionName = m.group(1);
@@ -55,7 +55,7 @@ public class SchedulePenaltyParser implements Parser {
 				competitionName = m.group(1);
 			}
 		}
-		String competitionID="";
+		String competitionID="NA";
 		m = Pattern.compile("/competition/([^/]*)/").matcher(doc.select("#navi > div.sitenavi > div > div > ul:nth-child(1) > li > a").get(0).outerHtml());
 		if(m.find()) {
 			competitionID = m.group(1);
@@ -71,8 +71,15 @@ public class SchedulePenaltyParser implements Parser {
 			throw new RuntimeException("Could not find season URI");
 		}
 
-		Node table = doc.getElementsByAttributeValue("class", "portfolio").get(0).getElementsByAttributeValue("class", "box").get(0).getElementsByClass("standard_tabelle").get(0).childNode(1);
-
+		Node table = null;
+		try {
+			table = doc.getElementsByAttributeValue("class", "portfolio").get(0).getElementsByAttributeValue("class", "box").get(0).getElementsByClass("standard_tabelle").get(0).childNode(1);
+		}
+		catch(IndexOutOfBoundsException i) {
+			//Season has no games.
+			return new ArrayList<Map<String,String>>();
+		}
+		
 		Iterator<Node> rowIterator = table.childNodes().iterator();
 		while (rowIterator.hasNext()) {
 			rowIterator.next();
@@ -88,8 +95,21 @@ public class SchedulePenaltyParser implements Parser {
 				latestYear = m.group(3);
 			}
 
-			if(!row.outerHtml().contains("pso")) {
+			Map<String, String> asMap = create_game_map();
+			
+			//Is a game row
+			m= Pattern.compile("(\\d+):(\\d+)").matcher(row.outerHtml());
+			//Is not a future game
+			Matcher futuregame= Pattern.compile("-:-").matcher(row.outerHtml());
+			if(!m.find() || futuregame.find()) {
 				continue;
+			}
+			
+			if(!row.outerHtml().contains("pso")) {
+//				continue;
+			}
+			else {
+				asMap.put("has_shootout", "1");
 			}
 
 			//Only needed for aet
@@ -97,7 +117,6 @@ public class SchedulePenaltyParser implements Parser {
 //				continue;
 //			}
 
-			Map<String, String> asMap = create_game_map();
 			asMap.put("competition", competitionName);
 			asMap.put("competition_ID", competitionID);
 
@@ -136,7 +155,7 @@ public class SchedulePenaltyParser implements Parser {
 				/*If the match does not have it own page/uri, create a URI as:
 				<season_uri>_<yearmonthday>_<home_team_id><away_teamid>
 				If there are no team IDs , use names instead:<season_uri>_<yearmonthday>_<home_team_name><away_team name>*/
-				if(!asMap.get("homeTeamID").equals("") && !asMap.get("awayTeamID").equals("")) {
+				if(!asMap.get("homeTeamID").equals("NA") && !asMap.get("awayTeamID").equals("NA")) {
 					asMap.put("uri" , "myid_"+season_uri+"_"+latestYear+""+latestMonth +"" +latestDay +"_" + asMap.get("homeTeamID")+"_" + asMap.get("awayTeamID"));
 				}
 				else {
@@ -154,22 +173,22 @@ public class SchedulePenaltyParser implements Parser {
 	//Try and maintain the same order as GameParser.java
 	private Map<String, String> create_game_map() {
 		Map<String, String> asMap = new LinkedHashMap<String, String>();
-		asMap.put("uri", "");
-		asMap.put("homeTeam", "");
-		asMap.put("awayTeam", "");
-		asMap.put("homeScore", "");
-		asMap.put("awayScore", "");
-		asMap.put("competition", "");
-		asMap.put("season", "");
-		asMap.put("round", "");
-		asMap.put("dist_from_final", "");
-		asMap.put("competition_ID","");
-		asMap.put("day", "");
-		asMap.put("month", "");
-		asMap.put("year", "");
-		asMap.put("homeTeamID", "");
-		asMap.put("awayTeamID", "");
-		asMap.put("has_shootout", "");
+		asMap.put("uri", "NA");
+		asMap.put("homeTeam", "NA");
+		asMap.put("awayTeam", "NA");
+		asMap.put("homeScore", "NA");
+		asMap.put("awayScore", "NA");
+		asMap.put("competition", "NA");
+		asMap.put("season", "NA");
+		asMap.put("round", "NA");
+		asMap.put("dist_from_final", "NA");
+		asMap.put("competition_ID","NA");
+		asMap.put("day", "NA");
+		asMap.put("month", "NA");
+		asMap.put("year", "NA");
+		asMap.put("homeTeamID", "NA");
+		asMap.put("awayTeamID", "NA");
+		asMap.put("has_shootout", "0");
 		return asMap;
 	}
 
@@ -192,7 +211,7 @@ public class SchedulePenaltyParser implements Parser {
 		//				);
 
 		System.out.println(
-				schedulePenaltyParser.parseURI("frauen-caf-womens-cup-1998-in-nigeria")
+				schedulePenaltyParser.parseURI("frauen-wm-2007-china")
 				);
 	}
 }
