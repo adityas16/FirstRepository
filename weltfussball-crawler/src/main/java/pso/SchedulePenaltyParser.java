@@ -44,7 +44,7 @@ public class SchedulePenaltyParser implements Parser {
 
 	private List<Map<String, String>> parseAllShootouts(Document doc) {
 		List<Map<String, String>> records  = new ArrayList<Map<String,String>>();
-		String competitionName="NA",latestDay="NA",latestMonth="NA",latestYear="NA";
+		String competitionName="",latestDay="",latestMonth="",latestYear="";
 		Matcher m = Pattern.compile(" » (.*) \\d{4}").matcher(doc.select("#navi > div.breadcrumb > h1").get(0).outerHtml());
 		if(m.find()) {
 			competitionName = m.group(1);
@@ -55,7 +55,7 @@ public class SchedulePenaltyParser implements Parser {
 				competitionName = m.group(1);
 			}
 		}
-		String competitionID="NA";
+		String competitionID="";
 		m = Pattern.compile("/competition/([^/]*)/").matcher(doc.select("#navi > div.sitenavi > div > div > ul:nth-child(1) > li > a").get(0).outerHtml());
 		if(m.find()) {
 			competitionID = m.group(1);
@@ -136,7 +136,7 @@ public class SchedulePenaltyParser implements Parser {
 				/*If the match does not have it own page/uri, create a URI as:
 				<season_uri>_<yearmonthday>_<home_team_id><away_teamid>
 				If there are no team IDs , use names instead:<season_uri>_<yearmonthday>_<home_team_name><away_team name>*/
-				if(!asMap.get("homeTeamID").equals("NA") && !asMap.get("awayTeamID").equals("NA")) {
+				if(!asMap.get("homeTeamID").equals("") && !asMap.get("awayTeamID").equals("")) {
 					asMap.put("uri" , "myid_"+season_uri+"_"+latestYear+""+latestMonth +"" +latestDay +"_" + asMap.get("homeTeamID")+"_" + asMap.get("awayTeamID"));
 				}
 				else {
@@ -154,21 +154,22 @@ public class SchedulePenaltyParser implements Parser {
 	//Try and maintain the same order as GameParser.java
 	private Map<String, String> create_game_map() {
 		Map<String, String> asMap = new LinkedHashMap<String, String>();
-		asMap.put("uri", "NA");
-		asMap.put("homeTeam", "NA");
-		asMap.put("awayTeam", "NA");
-		asMap.put("homeScore", "NA");
-		asMap.put("awayScore", "NA");
-		asMap.put("competition", "NA");
-		asMap.put("season", "NA");
-		asMap.put("round", "NA");
-		asMap.put("dist_from_final", "NA");
-		asMap.put("competition_ID","NA");
-		asMap.put("day", "NA");
-		asMap.put("month", "NA");
-		asMap.put("year", "NA");
-		asMap.put("homeTeamID", "NA");
-		asMap.put("awayTeamID", "NA");
+		asMap.put("uri", "");
+		asMap.put("homeTeam", "");
+		asMap.put("awayTeam", "");
+		asMap.put("homeScore", "");
+		asMap.put("awayScore", "");
+		asMap.put("competition", "");
+		asMap.put("season", "");
+		asMap.put("round", "");
+		asMap.put("dist_from_final", "");
+		asMap.put("competition_ID","");
+		asMap.put("day", "");
+		asMap.put("month", "");
+		asMap.put("year", "");
+		asMap.put("homeTeamID", "");
+		asMap.put("awayTeamID", "");
+		asMap.put("has_shootout", "");
 		return asMap;
 	}
 
@@ -191,7 +192,7 @@ public class SchedulePenaltyParser implements Parser {
 		//				);
 
 		System.out.println(
-				schedulePenaltyParser.parseURI("gold-cup-2019")
+				schedulePenaltyParser.parseURI("frauen-caf-womens-cup-1998-in-nigeria")
 				);
 	}
 }
