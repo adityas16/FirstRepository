@@ -1,0 +1,4 @@
+[
+  "rv_test.py::UtilsTest::test_expectation",
+  "rv_test.py::UtilsTest::test_myopic_policy"
+]
