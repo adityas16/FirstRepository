@@ -211,7 +211,7 @@ public class State {
 		AllPaths allPaths = State.computeAllPaths(Constants.defaultKickSequence());
 		for (List<State> path : allPaths.allPaths) {
 			for (int i=1;i<path.size();i++) {
-				System.out.print(path.get(i).a+ "" + path.get(i).b);
+				System.out.print("(" + path.get(i).a+ "," + path.get(i).b +")");
 			}
 			System.out.println(";");
 		}

@@ -32,14 +32,15 @@ public class StringUtils {
 	}
 	
 	public static String toSimpleCharset(String s){
-		try {
-			String s1 = Normalizer.normalize(s, Normalizer.Form.NFKD);
-	    String regex = "[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+";
-	    
-			return new String(s1.replaceAll(regex, "").getBytes("ascii"), "ascii");
-		} catch (Exception e) {
-			return s;
-		}
+//		try {
+//			String s1 = Normalizer.normalize(s, Normalizer.Form.NFD);
+//	    String regex = "[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+";
+//	    
+//			return new String(s1.replaceAll(regex, "").getBytes("ascii"), "ascii");
+//		} catch (Exception e) {
+//			return s;
+//		}
+		return s;
 	}
 	
 	public static String extractResourceURI(String baseURI){

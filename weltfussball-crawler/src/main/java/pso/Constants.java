@@ -5,7 +5,8 @@ public class Constants {
 //	public static String BASE_FOLDER = "/home/aditya/Dropbox/Research/Link to Research Data/";
 	
 	//Windows
-	public static String MYSQL_SERVER="107.178.212.44";
+	//public static String MYSQL_SERVER="107.178.212.44";
+	public static String MYSQL_SERVER="localhost";
 	public static String BASE_FOLDER = "C:\\Users\\adity\\Dropbox\\Research\\Link to Research Data\\";
 	
 	public static String weltFolder = BASE_FOLDER + "weltfussball/";
@@ -23,6 +24,7 @@ public class Constants {
 	
 	public static String all_matches = "all_matches";
 	public static String pso = "pso";
+	public static String competition = "competition";
 	public static String report = "report";
 	public static String player_summary = "player_summary";
 	public static String history = "history";

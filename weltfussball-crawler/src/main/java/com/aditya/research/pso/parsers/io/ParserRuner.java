@@ -1,7 +1,6 @@
 package com.aditya.research.pso.parsers.io;
 
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
@@ -16,9 +15,11 @@ import java.util.Map;
 import com.aditya.research.pso.crawlers.hockeyref.GoalParser;
 import com.aditya.research.pso.etl.StringUtils;
 import com.aditya.research.pso.parsers.GameParser;
+import com.aditya.research.pso.parsers.GameParserExtended;
 import com.aditya.research.pso.parsers.MatchGoalParser;
 import com.aditya.research.pso.parsers.MatchIncidentParser;
 import com.aditya.research.pso.parsers.MatchRedCardParser;
+import com.aditya.research.pso.parsers.NewSeasonParser;
 import com.aditya.research.pso.parsers.Parser;
 import com.aditya.research.pso.parsers.PenaltyShootoutParser;
 import com.aditya.research.pso.parsers.PlayerParser;
@@ -79,20 +80,20 @@ public class ParserRuner {
 			parser = new MatchIncidentParser();
 			outputCSV = "incidents.csv";
 		}
-		else if(extractFor.equals("playerPenaltyStats")){
+		else if(extractFor.equals("shooterPenaltyStats")){
 			pageCache = DBCache.transfermrktPlayerPenaltyStatsCache();
 			parser = PlayerPenaltyStatsParser.shooterParser();
-			outputCSV = "transfer_pen_stats.csv";
+			outputCSV = "shooter_penalty_stats.csv";
 		}
 		else if(extractFor.equals("game")){
-			pageCache = DBCache.weltgameCache();
+			pageCache = DBCache.weltpsoCache();
 			parser = new GameParser();
 			outputCSV = "games.csv";
 		}
 		else if(extractFor.equals("keeperPenaltyStats")){
 			pageCache = DBCache.transfermrktKeeperPenaltyStatsCache();
 			parser = PlayerPenaltyStatsParser.keeperParser();
-			outputCSV = "keeperPenaltyStats.csv";
+			outputCSV = "keeper_penalty_stats.csv";
 		}
 		else if(extractFor.equals("redCards")){
 			pageCache = DBCache.weltgameCache();
@@ -103,6 +104,16 @@ public class ParserRuner {
 			pageCache = DBCache.weltseasonCache();
 			parser = new SchedulePenaltyParser();
 			outputCSV = "all_pso_games.csv";
+		}
+		else if(extractFor.equals("gameExtended")){
+			pageCache = DBCache.weltpsoCache();
+			parser = new GameParserExtended();
+			outputCSV = "games_extended_details.csv";
+		}
+		else if(extractFor.equals("newSeasons")){
+			pageCache = DBCache.weltseasonCache();
+			parser = new NewSeasonParser();
+			outputCSV = "new_seasons.csv";
 		}
 		outputFile =  Constants.extractedCSV + outputCSV;
 	}
@@ -127,7 +138,7 @@ public class ParserRuner {
 			}
 			catch(Exception e){
 				errorCount++;
-				System.out.println(documentWIthIdentifier.getIdentifier());
+				System.out.println("Processing error: "+ documentWIthIdentifier.getIdentifier() + e.getMessage());
 			}
 			if(records.isEmpty()){
 				continue;
@@ -148,7 +159,6 @@ public class ParserRuner {
 				writer.writeNext(fields);
 			}
 			writer.flush();
-			System.out.println(documentWIthIdentifier.getIdentifier() + count++);
 		}
 		
 		writer.close();
@@ -187,15 +197,20 @@ public class ParserRuner {
 			
 //			System.out.println(URI + "," + count);
 		}
+		//Still wont write if there are less than 1000 entries total
+		if(!records.isEmpty()) {
+			FileUtils.append(records, outputFile);
+		}
+		
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String extractFor = "allPsoGames";
+		String extractFor = "game";
 		
 		ParserRuner pr = new ParserRuner(extractFor);
 //		ParserRuner pr = ParserRuner.hockeyRefParserRuner(extractFor);
-		pr.parseAll();
-//		pr.parseFromFile(Constants.weltFolder + "games_diff.csv");
-//		pr.parseFromFile("/home/aditya/epl_players_sorted");
+//		pr.parseAll();
+//		pr.parseFromFile(Constants.weltFolder + "shooter_pages");
+		pr.parseFromFile("C:\\Users\\adity\\Desktop\\temp.csv");
 	}
 }

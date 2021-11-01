@@ -107,11 +107,11 @@ public class GameParser implements Parser {
 		Pattern p = Pattern.compile("(.*) - (.*) (\\d+):(\\d+) \\((.*) (\\d+)(.*), (.*)\\)");
 		Matcher m = p.matcher(title);
 		if (m.find()) {
-			asMap.put("homeTeam", m.group(1));
-			asMap.put("awayTeam", m.group(2));
+			asMap.put("homeTeam", StringUtils.toSimpleCharset(m.group(1)));
+			asMap.put("awayTeam", StringUtils.toSimpleCharset(m.group(2)));
 			asMap.put("homeScore", m.group(3));
 			asMap.put("awayScore", m.group(4));
-			asMap.put("competition", m.group(5));
+			asMap.put("competition", StringUtils.toSimpleCharset(m.group(5)));
 			asMap.put("season", m.group(6));
 			asMap.put("round", m.group(8));
 			asMap.put("dist_from_final",RoundNameParser.findDistanceFromFinal(m.group(8)) + "");
@@ -121,7 +121,7 @@ public class GameParser implements Parser {
 	public static void main(String[] args) throws IOException {
 
 		GameParser mp = new GameParser();
-		System.out.println(mp.parse(DBCache.weltgameCache().get("primera-division-2012-2013-rayo-vallecano-atletico-madrid")));
+		System.out.println(mp.parse(DBCache.weltgameCache().get("europa-league-qual-2016-2017-2-runde-zaglebie-lubin-partizan")));
 		System.out.println(mp.parse(DBCache.weltgameCache().get("afrika-cup-1992-im-senegal-finale-elfenbeinkueste-ghana")));
 		//score and goals mismatch
 		mp.parse(DBCache.weltgameCache().get("a-grupa-2009-2010-minyor-pernik-botev-plovdiv"));

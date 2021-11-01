@@ -111,25 +111,7 @@ public class DataValiditor {
 			System.out.println("");
 			flag = false;
 		}
-		for (Shot shot : shots) {
-			if(shot.kickNumber > numberOfRegularKicks){
-				continue;
-			}
-			try{
-				ScoreValidator.assertTransition(a1, b1, shot.kickNumber, shot.getAScore(), shot.getBScore());
-			}
-			catch(RuntimeException r){
-				System.out.println(r.getMessage() + " : " + shot.toString());
-				flag = false;
-			}
-			if(ScoreValidator.isEndState(a1, b1, shot.kickNumber -1)){
-				flag = false;
-			}
-			a1 = shot.getAScore();
-			b1 = shot.getBScore();
-		}
 		int noOfShots = shots.size();
-		Shot lastShot = shots.get(noOfShots-1);
 		if(noOfShots > numberOfRegularKicks){
 			if(noOfShots %2 ==1){
 				System.out.println("Odd number of shots including rapid fire : " + gameId);
@@ -143,11 +125,11 @@ public class DataValiditor {
 				System.out.println("Rapid fire end goal difference != 1  : " + gameId);
 				flag = false;
 			}
-		}
-		else{
-			if(!ScoreValidator.isEndState(lastShot.getAScore(), lastShot.getBScore(), lastShot.kickNumber)){
-				System.out.println("Does not end in valid end state  : " + gameId);
-				flag = false;
+			for(int i=10; i<shots.size()-4;) {
+				if(Math.abs(shots.get(i+1).getAScore() - shots.get(i+1).getBScore()) == 1){
+					flag = false;
+				}
+				i=i+2;
 			}
 		}
 		return flag;

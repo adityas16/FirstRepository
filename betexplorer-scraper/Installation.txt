@@ -1,0 +1,24 @@
+Step 1: Install Python 2.7
+https://www.python.org/downloads/
+Install Microsoft Visual C++ for Python 2.7
+http://wordpress.redirectingat.com/?id=725X1342&site=scraper24x7.wordpress.com&xs=1&isjs=1&url=https%3A%2F%2Fwww.microsoft.com%2Fen-in%2Fdownload%2Fdetails.aspx%3Fid%3D44266&xguid=79b1ea660801d5165b68380d5e4f2e29&xuuid=3953c7bfa4a8ac0a75b8843ece48b2ad&xsessid=&xcreo=0&xed=0&sref=https%3A%2F%2Fscraper24x7.wordpress.com%2F2016%2F03%2F19%2Fhow-to-install-scrapy-in-windows%2F&pref=https%3A%2F%2Fwww.google.com.eg%2F&xtz=-120&jv=13.12.1-stackpath&bv=2.5.1
+Install lxml
+http://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml
+Install Pywin32
+https://sourceforge.net/projects/pywin32/files/pywin32/Build%20220/
+
+pywin32 224
+pip install pywin32
+
+requests 2.20.1
+pip install requests
+
+Download the latest (the last one) wheel file from this link
+https://www.lfd.uci.edu/~gohlke/pythonlibs/#twisted
+pip install <*wheel file's name*>
+
+Scrapy Random User-Agent
+pip install scrapy-random-useragent
+
+Install Scrapy
+pip install Scrapy

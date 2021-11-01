@@ -106,7 +106,7 @@ public class SchedulePenaltyParser implements Parser {
 			}
 			
 			if(!row.outerHtml().contains("pso")) {
-//				continue;
+				continue;
 			}
 			else {
 				asMap.put("has_shootout", "1");
@@ -116,7 +116,7 @@ public class SchedulePenaltyParser implements Parser {
 //			if(!row.childNodes().get(11).outerHtml().contains("aet")) {
 //				continue;
 //			}
-
+			
 			asMap.put("competition", competitionName);
 			asMap.put("competition_ID", competitionID);
 
@@ -165,9 +165,32 @@ public class SchedulePenaltyParser implements Parser {
 				
 			}
 			
+			extractScore(asMap, row);
+			
 			records.add(asMap);
 		}
 		return records;
+	}
+	
+	private void extractScore(Map<String, String> asMap,Node row) {
+		Iterator<Node> withinRowIterator = row.childNodes().iterator();
+		boolean foundTeamIDs = false;
+		Matcher m2;
+		while (withinRowIterator.hasNext()) {
+			Node rowField = withinRowIterator.next();
+			if(foundTeamIDs) {
+				m2 = Pattern.compile("(\\d+):(\\d+)").matcher(rowField.outerHtml());
+				if(m2.find()) {
+					asMap.put("homeScore", m2.group(1));
+					asMap.put("awayScore", m2.group(2));
+					return;
+				}
+			}
+			m2 = Pattern.compile("<a href=\"/teams/([^/]*)").matcher(rowField.outerHtml());
+			if(m2.find()) {
+				foundTeamIDs=true;
+			}
+		}
 	}
 
 	//Try and maintain the same order as GameParser.java
@@ -211,7 +234,7 @@ public class SchedulePenaltyParser implements Parser {
 		//				);
 
 		System.out.println(
-				schedulePenaltyParser.parseURI("frauen-wm-2007-china")
+				schedulePenaltyParser.parseURI("eng-league-cup-1989-1990")
 				);
 	}
 }

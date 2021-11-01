@@ -3,7 +3,7 @@ library(dplyr)
 library(sqldf)
 library(ggplot2)
 require(gridExtra)
-in_play_penalties = read.csv(paste(WELT_FOLDER,"extractedCSV/incidents.csv",sep="/"))
+in_play_penalties = read.csv(paste(WELT_FOLDER,"extractedCSV/in_play_penalties.csv",sep="/"))
 in_play_penalties = in_play_penalties[!is.na(in_play_penalties$is_home),]
 in_play_penalties$is_score = 1 - in_play_penalties$is_miss
 
@@ -70,7 +70,7 @@ hist(penalties_with_miss_information$time)
 penalties_with_miss_information$bucket = floor(penalties_with_miss_information$time/15)
 ddply(penalties_with_miss_information,c("shooter_gd_sign"),prop=myprop(is_score),n=length(is_score),summarize)
 
-ddply(penalties_with_miss_information,c("is_home_corrected"),prop=myprop(is_score),n=length(is_score),summarize)
+ddply(penalties_with_miss_information,c("is_home"),prop=myprop(is_score),n=length(is_score),summarize)
 
 
 #Plot season graphs

@@ -52,6 +52,9 @@ public class DBCache {
 
 	public Document get(String uri) throws IOException{
 		try{
+			if(uri.startsWith("myid")) {
+				throw new RuntimeException("My own IDs should not be saved or looked up!");
+			}
 			read.setString(1, uri);
 			ResultSet rs = read.executeQuery();
 			if(rs.next()){
@@ -135,6 +138,9 @@ public class DBCache {
 	}
 	public static DBCache weltpsoCache(){
 		return new DBCache("pso", "weltfussball",Constants.worldfootballURL + Constants.report + "/");
+	}
+	public static DBCache weltCompetitionCache(){
+		return new DBCache("competition", "weltfussball",Constants.worldfootballURL + Constants.competition + "/");
 	}
 	public static DBCache weltgameCache(){
 		return new DBCache("game", "weltfussball",Constants.worldfootballURL + Constants.report + "/");
