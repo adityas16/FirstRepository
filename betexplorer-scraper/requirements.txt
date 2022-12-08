@@ -13,7 +13,7 @@ BeautifulSoup==3.2.1
 bleach==2.1.2
 boto==2.48.0
 cachetools==2.0.1
-certifi==2018.1.18
+certifi==2022.12.7
 cffi==1.11.2
 chardet==3.0.4
 Click==7.0
